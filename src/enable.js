@@ -416,13 +416,11 @@ function isImage(ch, nc, imar) {
 
 function containsImage(node, imgs)
 {
-	let childn = Array.from(node.getElementsByTagName('*'));
 	var img;
 	for (img of imgs) {
-		if (childn.includes(img))
+		if (node.contains(img))
 			return true;
 	}
-	childn.length = 0;
 	return false;
 }
 
@@ -759,7 +757,6 @@ function start(cfg, url)
 
 	let b_ctext = [];
 	let b_chimg = [];
-	let b_cimg = [];
 	let b_iimg = [];
 	let b_fimg = [];
 	let b_fnt = [];
@@ -833,7 +830,6 @@ function start(cfg, url)
 	{
 		b_body = false;
 		b_ctext = [];
-		b_cimg = [];
 		b_chimg = [];
 		b_iimg = [];
 		b_fimg = [];
@@ -882,8 +878,8 @@ function start(cfg, url)
 			}
 			for (n of images) {
 			nc = map.get(n);
-			b_cimg[nc] = containsImage(n, images);
-			b_chimg[map.get(n.parentNode)] = true;
+			if (b_iimg[map.get(n.parentNode)])
+				b_chimg[nc] = true;
 			let img_children = Array.from(n.getElementsByTagName("*"));
 			img_children.forEach( function(item) { b_fimg[map.get(item)] = n; } );
 			if (img_area[nc] > 35000 && img_area[nc] < 5000000)
@@ -1063,7 +1059,7 @@ function start(cfg, url)
 				img.setAttribute('style', isty + ';filter:unset!important;');
 				continue;
 			}
-			if (!nn_reg.test(isty) && !nn_reg.test(pisty) && !p_s && (!b_cimg[n_c] || b_imgforce[n_c] || ((!b_chimg[n_c] && hdr != null && hdr.contains(img)) || /image/i.test(img.type) || bgim.length > 0 || imsrc.length > 0 || b_chimg[n_c])))
+			if (!nn_reg.test(isty) && !nn_reg.test(pisty) && !p_s && (!containsImage(img, images) || b_imgforce[n_c] || ((!b_chimg[n_c] && hdr != null && hdr.contains(img)) || /image/i.test(img.type) || bgim.length > 0 || imsrc.length > 0 || b_chimg[n_c])))
 				if (!(/\b(UL|OL)/i.test(img.nodeName) && img.childNodes.length < 4)) {
 					img.setAttribute('style', isty + ';filter:invert(1)!important;');
 					let chldn = Array.from(img.getElementsByTagName('*'));
