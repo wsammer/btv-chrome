@@ -1,0 +1,53 @@
+@font-face {
+    font-family: Lato;
+    src: url('fonts/LatoLatin-Regular.woff2') format('woff2');
+    font-weight: normal;
+}
+
+body {
+	background:white;
+}
+
+.slider:focus {
+    outline: none;
+}
+
+.slider::-moz-range-thumb
+{
+	background:white;
+	cursor:w-resize;
+}
+.slider::-moz-range-track 
+{
+	background: rgb(196, 196, 196);
+	cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+body {
+	background:#20272f!important;
+}
+label,h1,h2,h3,h4,li,p,b {
+	color: white!important;
+}
+span {
+	color: white!important;
+}
+.container input:checked ~ .checkmark {
+	background-color: #0077ff!important;
+}
+textarea {
+	color: white!important;
+	background-color: black!important;	
+}
+.slider::-moz-range-thumb 
+{
+	background-color: #0077ff!important;
+}
+table {
+	color: white!important;
+}
+tr:hover { 
+	color: black!important;
+}
+}
