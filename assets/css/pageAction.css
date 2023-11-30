@@ -30,6 +30,7 @@ body
     display:flex;
     justify-content: space-between;
     align-items:baseline;
+    margin-bottom: 5px;
 }
 
 .val 
@@ -43,7 +44,7 @@ body
 {
     width: 380px;
     border-radius: 5px;
-    padding-bottom: 0.3em;
+    padding-bottom: 0.25em;
     height: 0.9em;
 }
 
@@ -180,6 +181,7 @@ button:hover {
 {
     width:125px;
     align-self:flex-end;
+    margin-bottom: auto;
 }
 input[type='checkbox'] {
     float: right;
