@@ -23,6 +23,7 @@ chrome.runtime.onInstalled.addListener(function(details){
 			'skipWhites': true,
 			'forceIInv': true,
 			'normalInc': true,
+			'normalInc2': false,
 			'enableEverywhere': true
 		};
 

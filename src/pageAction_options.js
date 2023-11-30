@@ -44,6 +44,7 @@ function init(tabs)
 	let customCss       = $("#customCss");
 	let customCssText   = $("#customCssText");
 	let normalInc       = $("#normalInc");
+	let normalInc2      = $("#normalInc2");
 	let skipNavSection  = $("#skipNavSection");
 	let skipHeights     = $("#skipHeights");
 
@@ -103,6 +104,7 @@ function init(tabs)
 		"forceIInv",
 		"forceOpacity",
 		"normalInc",
+		"normalInc2",
 		"skipWhites",
 		"makeCaps",
 		"start3",
@@ -160,6 +162,7 @@ function init(tabs)
 		start3.checked           = item.start3;
 		skipLinks.checked        = item.skipLinks;
 		normalInc.checked        = item.normalInc;
+		normalInc2.checked       = item.normalInc2;
 		skipNavSection.checked   = item.skipNavSection;
 		skipHeights.checked      = item.skipHeights;
 		underlineLinks.checked   = item.underlineLinks;
@@ -201,6 +204,7 @@ function init(tabs)
 				forceIInv:      forceIInv.checked,
 				forceOpacity:   forceOpacity.checked,
 				normalInc:      normalInc.checked,
+				normalInc2:     normalInc2.checked,
 				skipWhites:     skipWhites.checked,
 				makeCaps:       makeCaps.checked,
 				start3:         start3.checked,
