@@ -1293,9 +1293,9 @@ function start(cfg, url)
 				b_fnt[node_count] = true;
 				let nsty = node.getAttribute('style');
 				if (nsty == null) nsty = '';
-				let sfz = (parseFloat(style.fontSize)).toFixed(2);
-				let nfz = parseInt(style.fontSize);
-				if (sfz <= cfg.threshold) {
+				let sfz = style.fontSize;
+				let nfz = parseInt(sfz);
+				if (parseFloat(sfz) <= cfg.threshold) {
 					if (/font-size[^;]*important/i.test(nsty)) {
 						let rsty = nsty.replace(/font-size[^\;]*important/ig,'');
 						node.setAttribute('style',rsty);
@@ -1335,9 +1335,9 @@ function start(cfg, url)
 				}
 			} else if (b_fnt[node_count] != true && cfg.threshold > 0 && (!b_iimg[node_count] || b_ctext[node_count] > 0)) {
 				b_fnt[node_count] = true;
-				let sfz = (parseFloat(style.fontSize)).toFixed(2);
-				let nfz = parseInt(style.fontSize);
-				if (sfz <= cfg.threshold) {
+				let sfz = style.fontSize;
+				let nfz = parseInt(sfz);
+				if (parseFloat(sfz) <= cfg.threshold) {
 					node.setAttribute('s__', nfz);
 					if (style.fontSize == sfz) {
 						node.style.setProperty('font-size',f2_sizes[nfz],'important');
@@ -1370,16 +1370,28 @@ function start(cfg, url)
 					let cful = calcColorfulness(col);
 					let pcol = col;
 					if (col.length > 0 && cful >= 24) {
-						if (cfg.forcePlhdr && !nodes_behind_inv.includes(node) && !/invert/.test(style.filter)  && Math.min(parseInt(col[0]),parseInt(col[1]),parseInt(col[2])) != parseInt(col[2])) {
-						if ((255-parseInt(col[0])) > (255-parseInt(col[1]))) {
-							let blu = col[2];
-							col[2] = col[1];
-							col[1] = blu;
+						if (cfg.forcePlhdr && !nodes_behind_inv.includes(node) && !/invert/.test(style.filter)  && Math.min(parseInt(col[0]),parseInt(col[1]),parseInt(col[2])) != parseInt(col[1])) {
+						if (parseInt(col[0]) >= parseInt(col[2])) {
+							let blu = col[1];
+							col[1] = col[2];
+							col[2] = blu;
 							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						} else if ((255-parseInt(col[1])) > (255-parseInt(col[0]))) {
+						} else if (parseInt(col[2]) > parseInt(col[0])) {
+							let blu = col[1];
+							col[1] = col[0];
+							col[0] = blu;
+							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+						}
+						} else if (cfg.forcePlhdr && (nodes_behind_inv.includes(node) || /invert/.test(style.filter)) && Math.max(parseInt(col[0]),parseInt(col[1]),parseInt(col[2])) != parseInt(col[2])) {
+						if (parseInt(col[0]) > parseInt(col[1])) {
 							let blu = col[2];
 							col[2] = col[0];
 							col[0] = blu;
+							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+						} else if (parseInt(col[1]) > parseInt(col[0])) {
+							let blu = col[2];
+							col[2] = col[1];
+							col[1] = blu;
 							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
 						}
 						} else if (!cfg.forcePlhdr && Math.max(parseInt(col[0]),parseInt(col[1]),parseInt(col[2])) != parseInt(col[2])) {
@@ -1403,16 +1415,28 @@ function start(cfg, url)
 					cful = calcColorfulness(col);
 					pcol = col;
 					if (col.length > 0 && cful >= 24) {
-						if (cfg.forcePlhdr && !nodes_behind_inv.includes(node) && !/invert/.test(style.filter) && Math.min(parseInt(col[0]),parseInt(col[1]),parseInt(col[2])) != parseInt(col[2])) {
-						if ((255-parseInt(col[0])) > (255-parseInt(col[1]))) {
-							let blu = col[2];
+						if (cfg.forcePlhdr && !nodes_behind_inv.includes(node) && !/invert/.test(style.filter)  && Math.min(parseInt(col[0]),parseInt(col[1]),parseInt(col[2])) != parseInt(col[1])) {
+						if (parseInt(col[0]) >= parseInt(col[2])) {
+							let blu = col[1];
 							col[2] = col[1];
 							col[1] = blu;
 							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						} else if ((255-parseInt(col[1])) > (255-parseInt(col[0]))) {
+						} else if (parseInt(col[2]) > parseInt(col[0])) {
+							let blu = col[1];
+							col[1] = col[0];
+							col[0] = blu;
+							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+						}
+						} else if (cfg.forcePlhdr && (nodes_behind_inv.includes(node) || /invert/.test(style.filter)) && Math.max(parseInt(col[0]),parseInt(col[1]),parseInt(col[2])) != parseInt(col[2])) {
+						if (parseInt(col[0]) > parseInt(col[1])) {
 							let blu = col[2];
 							col[2] = col[0];
 							col[0] = blu;
+							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+						} else if (parseInt(col[1]) > parseInt(col[0])) {
+							let blu = col[2];
+							col[2] = col[1];
+							col[1] = blu;
 							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
 						}
 						} else if (!cfg.forcePlhdr && Math.max(parseInt(col[0]),parseInt(col[1]),parseInt(col[2])) != parseInt(col[2])) {
