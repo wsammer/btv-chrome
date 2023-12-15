@@ -1,6 +1,6 @@
 @font-face {
-    font-family: Lato;
-    src: url('fonts/LatoLatin-Regular.woff2') format('woff2');
+    font-family: Basic;
+    src: url('fonts/BasicLatin-Regular.woff2') format('woff2');
     font-weight: normal;
 }
 
@@ -51,10 +51,15 @@ tr:hover {
 	color: black!important;
 }
 #url {
-	color: cyan!important;
+	color: lightyellow!important;
 }
 #LightDark {
-	color: cyan!important;
+	color: lightyellow!important;
+}
+
+::placeholder {
+    color: lime!important;
 }
 
 }
+

@@ -3,7 +3,7 @@ html,body{
     margin:auto;
 }
 body { 
-    font-family: 'Lato', sans-serif;
+    font-family: 'Basic', sans-serif;
     width: 95%;
     background: white;
 }
@@ -12,13 +12,18 @@ body {
     flex-direction: column;
     padding:0;
     width:100%;
-    font-size:2.5vw;
+    font-size:3.0vw;
 }
 .settings {
     display:flex;
     align-items:center;
     justify-content:space-between;
 }
+
+.settings span:first-child {
+    width: 12em;
+}
+
 .checkboxes{
     display:flex;
     flex-direction:column;
@@ -56,13 +61,13 @@ body {
     position:absolute;
     right:35vw;
     font-size:1.7em;
-    font-family: Lato, serif;
+    font-family: Basic, serif;
 }
 button 
 {
     padding: 0.35em 1em;
     cursor: pointer;
-    font-family:"Lato";
+    font-family:"Basic";
     border-radius: 5px;
     transition: background-color 0.1s ease-out;
     color:black;
@@ -82,7 +87,7 @@ button.remove
 textarea {
     width: 100%;
     resize: none; 
-    font-family: Lato, serif; 
+    font-family: Basic, serif; 
     font-style: italic; 
     font-size: 1.7em;
     border: 0.32vw solid black;
@@ -113,7 +118,7 @@ table th:nth-child(2) { /*Strength label*/
     text-align: center;
 }
 #whitelist td:nth-child(2) { /*Strength value*/
-    font-family: Lato, serif;
+    font-family: Basic, serif;
     text-align: center;
     position:relative;
     font-size:1.7em;
@@ -218,7 +223,7 @@ input[type='checkbox'] {
 .help-tip 
 {
     position:absolute;
-    left: 16em;
+    left: 13em;
     text-align: center;
     background-color: black;
     border-radius: 50%;
