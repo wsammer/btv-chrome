@@ -6,7 +6,7 @@ html
 body
 {
     font-family: 'Basic', sans-serif;
-    font-size: 16.75px;
+    font-size: 17px;
     margin:0;
     padding:0;
     width:640px;
@@ -108,7 +108,7 @@ input[type="range"]::-webkit-slider-thumb {
 #refreshBtn
 {
 	position:absolute;
-	bottom:0.6em;
+	bottom:0.3em;
 	opacity:0;
 	z-index:2;
 	
@@ -142,8 +142,8 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .separator{
     margin-right:0.1em;
-    width:46%;
-    margin-bottom:0.7em;
+    width:48%;
+    margin-bottom:0.5em;
 }
 .separator div {
     margin-bottom:0.35em;
@@ -151,6 +151,11 @@ input[type="range"]::-webkit-slider-thumb {
 #sep{
     margin-left:0.1em;
     width:49%;
+}
+
+.separator:nth-child(3),
+.separator:nth-child(4) {
+    margin-bottom:0!important;
 }
 
 /*Buttons/checkmarks*/
@@ -194,10 +199,10 @@ input[type='checkbox'] {
 .container {
     float:right;
     position: relative;
-    margin-right: 20px;
+    margin-right: 26px;
     cursor: pointer;
     user-select: none;
-    margin-top: -19px;
+    margin-top: -18px;
 }
 .checkmark {
     position: absolute;
