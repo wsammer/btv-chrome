@@ -32,6 +32,7 @@ let start3          = doc.querySelector('#start3');
 let skipLinks       = doc.querySelector('#skipLinks');
 let normalInc       = doc.querySelector('#normalInc');
 let normalInc2      = doc.querySelector('#normalInc2');
+let ssrules         = doc.querySelector('#ssrules');
 let skipNavSection  = doc.querySelector('#skipNavSection');
 let skipHeights     = doc.querySelector('#skipHeights');
 let underlineLinks  = doc.querySelector('#underlineLinks');
@@ -180,8 +181,9 @@ function init()
 		"skipHeadings",
 		"advDimming",
 		"forceOpacity",
-		'normalInc',
-		'normalInc2',
+		"normalInc",
+		"normalInc2",
+		"ssrules",
 		"forcePlhdr",
 		"forceIInv",
 		"skipWhites",
@@ -214,7 +216,9 @@ function init()
 		if (doc.getElementById("normalInc") != null)
 			doc.getElementById("normalInc").checked      = i.normalInc;
 		if (doc.getElementById("normalInc2") != null)
-			doc.getElementById("normalInc2").checked      = i.normalInc2;
+			doc.getElementById("normalInc2").checked     = i.normalInc2;
+		if (doc.getElementById("ssrules") != null)
+			doc.getElementById("ssrules").checked        = i.ssrules;
 		if (doc.getElementById("makeCaps") != null)
 			doc.getElementById("makeCaps").checked       = i.makeCaps;
 		if (doc.getElementById("start3") != null)
@@ -348,6 +352,12 @@ function addListeners()
 	if (normalInc2 !== null) {
 	normalInc2.onclick = () => {
 		chrome.storage.local.set({'normalInc2': isChecked("normalInc2")});
+	};
+	}
+
+	if (ssrules !== null) {
+	ssrules.onclick = () => {
+		chrome.storage.local.set({'ssrules': isChecked("ssrules")});
 	};
 	}
 
