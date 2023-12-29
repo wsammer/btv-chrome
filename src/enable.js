@@ -1,5 +1,147 @@
 "use strict";
 
+function colorblindBg(col, cfg, nbinv, bfilter, n_inv, b_forced) {
+	let cmin = Math.min(col[0],col[1],col[2]);
+	let cmax = Math.max(col[0],col[1],col[2]);
+	let pcol = '';
+	if (cfg.forcePlhdr && !nbinv && !bfilter && cmin != col[2]) {
+		if (col[1] >= col[0]) {
+			let blu = col[2];
+			col[2] = col[0];
+			col[0] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		} else if (col[0] > col[1]) {
+			let blu = col[2];
+			col[2] = col[1];
+			col[1] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		}
+	} else if (!b_forced && !cfg.forcePlhdr && cfg.advDimming && cmax != col[2]) {
+		if (col[0] >= col[1]) {
+			let blu = col[2];
+			col[2] = col[0];
+			col[0] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		} else if (col[1] > col[0]) {
+			let blu = col[2];
+			col[2] = col[1];
+			col[1] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		}
+	} else if (cfg.forcePlhdr && (nbinv|| bfilter) && cmax != col[2]) {
+		if (col[0] > col[1]) {
+			let blu = col[2];
+			col[2] = col[0];
+			col[0] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		} else if (col[1] > col[0]) {
+			let blu = col[2];
+			col[2] = col[1];
+			col[1] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		}
+	} else if (!cfg.forcePlhdr && cmax != col[2]) {
+		if (col[0] > col[1]) {
+			let blu = col[2];
+			col[2] = col[0];
+			col[0] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		} else if (col[1] > col[0]) {
+			let blu = col[2];
+			col[2] = col[1];
+			col[1] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		}
+	}
+	return pcol;
+}
+
+function colorblindFg(col, cfg, nbinv, bfilter, n_inv, b_forced) {
+	let cmin = Math.min(col[0],col[1],col[2]);
+	let cmax = Math.max(col[0],col[1],col[2]);
+	let pcol = '';
+	if (cfg.forcePlhdr && n_inv > 2 && !nbinv && !bfilter && cmin != col[1]) {
+		if (col[0] >= col[2]) {
+			let blu = col[1];
+			col[1] = col[2];
+			col[2] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		} else if (col[2] > col[0]) {
+			let blu = col[1];
+			col[1] = col[0];
+			col[0] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		}
+	} else if (cfg.forcePlhdr && n_inv > 2 && (nbinv || bfilter) && cmax != col[1]) {
+		if (col[2] >= col[0]) {
+			let blu = col[1];
+			col[1] = col[2];
+			col[2] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		} else if (col[0] > col[2]) {
+			let blu = col[1];
+			col[1] = col[0];
+			col[0] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		}
+	} else if (cfg.forcePlhdr && cmin != col[1]) {
+		if (col[2] > col[0]) {
+			let blu = col[1];
+			col[1] = col[0];
+			col[0] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		} else if (col[0] > col[2]) {
+			let blu = col[1];
+			col[1] = col[2];
+			col[2] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		}
+	} else if (!b_forced && !cfg.forcePlhdr && cfg.advDimming && cmin != col[1]) {
+		if (col[2] >= col[0]) {
+			let blu = col[1];
+			col[1] = col[2];
+			col[2] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		} else if (col[0] > col[2]) {
+			let blu = col[1];
+			col[1] = col[0];
+			col[0] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		}
+	} else if (!cfg.forcePlhdr && cmax != col[2]) {
+		if (col[0] > col[1]) {
+			let blu = col[2];
+			col[2] = col[0];
+			col[0] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		} else if (col[1] > col[0]) {
+			let blu = col[2];
+			col[2] = col[1];
+			col[1] = blu;
+			pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
+		}
+	}
+	return pcol;
+}
+
+function hexToRGBA(h) {
+  let r = 0, g = 0, b = 0, a = 1;
+
+  if (h.length == 5) {
+    r = "0x" + h[1] + h[1];
+    g = "0x" + h[2] + h[2];
+    b = "0x" + h[3] + h[3];
+    a = "0x" + h[4] + h[4];
+
+  } else if (h.length == 9) {
+    r = "0x" + h[1] + h[2];
+    g = "0x" + h[3] + h[4];
+    b = "0x" + h[5] + h[6];
+    a = "0x" + h[7] + h[8];
+  }
+  a = +(a / 255).toFixed(3);
+  return "rgba(" + +r + "," + +g + "," + +b + "," + a + ")";
+}
 
 function createFilterMatrix(config) {
 	return g_m;
@@ -96,7 +238,7 @@ let h_sizes = [];
 let b_body = false;
 let eng = false;
 var str_style;
-var str_style2;
+var str_style2 = '1';
 var t_start, t_end;
 
 const focalAnchors = {};
@@ -342,6 +484,9 @@ function containsText(node, mp)
 			} else if (typeof ch.value != 'undefined' && ch.value != null && ch.value.length > 0) {
 				r = ch.value.replace(/[^\S]+/g,'');
 				len = len + parseInt(r.length);
+			} else if (typeof ch.textContent != 'undefined' && ch.textContent != null && ch.textContent.length > 0) {
+				r = ch.textContent.replace(/[^\S]+/g,'');
+				len = len + parseInt(r.length);
 			}
 		}
 		if (ch.nodeType  == Node.TEXT_NODE && /\S/.test(ch.nodeValue)) {
@@ -353,6 +498,16 @@ function containsText(node, mp)
 	}
 
 	return len;
+}
+
+function waitForImage(im) {
+return new Promise((res, rej) => {
+if (im.complete) {
+return res();
+}
+im.onload = () => res();
+im.onerror = () => res();
+});
 }
 
 function isImage(ch, nc, imar) {
@@ -368,15 +523,15 @@ function isImage(ch, nc, imar) {
 		wi = parseInt(ch.getBoundingClientRect().width);
 		he = parseInt(ch.getBoundingClientRect().height);
 		imar[nc] = wi*he;
-		if (wi > 499 && he > 139) b_imgforce[nc] = true;
-		if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && imar[nc] < 35000) return false;
+		if (wi > 499 && he > 99) b_imgforce[nc] = true;
+		if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && imar[nc] < 400) return false;
 		return true;
 	case'SVG':
 		wi = parseInt(ch.getBoundingClientRect().width);
 		he = parseInt(ch.getBoundingClientRect().height);
 		imar[nc] = wi*he;
-		if (wi > 499 && he > 139) b_imgforce[nc] = true;
-		if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && imar[nc] < 35000) return false;
+		if (wi > 499 && he > 99) b_imgforce[nc] = true;
+		if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && imar[nc] < 400) return false;
 		return true;
 	case 'VIDEO':
 	case 'EMBED':
@@ -385,41 +540,67 @@ function isImage(ch, nc, imar) {
 		wi = parseInt(ch.getBoundingClientRect().width);
 		he = parseInt(ch.getBoundingClientRect().height);
 		imar[nc] = wi*he;
-		if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && imar[nc] < 35000) return false;
+		if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && imar[nc] < 400) return false;
 		return true;
 	default:
 	if ( gcs != null && bgim != '' && bgim != 'none' && gcs.getPropertyValue('display') != 'none' && !/(php|htm[l]?|asp[x]?)[\"\'\)]/i.test(bgim) && /(\/|http|url|gradient)/ig.test(bgim)) {
+		if (!/gradient/i.test(bgim)) {
+		var im, src;
+                im = new Image();
+                src = gcs.backgroundImage.replace(/url\((['"])?(.*?)\1\)/gi, '$2');
+		im.src = src;
+		/** im.decode().then(() => {
+		wi = parseInt(im.width);
+		he = parseInt(im.height);
+		imar[nc] = wi*he;
+		});*/
+		waitForImage(im).then((res) => {
+		});;
+		wi = parseInt(im.naturalWidth);
+		he = parseInt(im.naturalHeight);
+		if (wi == 0 && he == 0) {
 		wi = parseInt(ch.getBoundingClientRect().width);
 		he = parseInt(ch.getBoundingClientRect().height);
-		if (!/gradient/i.test(bgim)) {
-                let im = new Image();
-                let src = gcs.backgroundImage.replace(/url\((['"])?(.*?)\1\)/gi, '$2');
-                im.src = src;
-		im.onload = function () {
-		};
+		}
 		imar[nc] = wi*he;
-		if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && imar[nc] < 35000) return false;
-		if ((parseInt(im.width) > 1 && parseInt(im.height) > 1) || (parseInt(im.width) == 0 && parseInt(im.height) == 0)) {
-			if (wi > 499 && he > 139) b_imgforce[nc] = true;
+		if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && imar[nc] < 400) return false;
+		if ((wi > 0 && he > 0) || (wi == 0 && he == 0)) {
+			if (wi > 499 && he > 99) b_imgforce[nc] = true;
 				return true;
 			} else {
 				return false;
 		}
 		} else {
+		wi = parseInt(ch.getBoundingClientRect().width);
+		he = parseInt(ch.getBoundingClientRect().height);
 		imar[nc] = wi*he;
 		if ((wi> 1 && he > 1) || (wi == 0 && he == 0)) {
-			if (wi > 499 && he > 139) b_imgforce[nc] = true;
+			if (wi > 499 && he > 99) b_imgforce[nc] = true;
 				return true;
 			} else {
 				return false;
 			}		
 		}
 	} else if (typeof chsrc != 'undefined' && chsrc != null && chsrc != '' && ch.display != 'none' && ch.type != null && typeof ch.type != 'undefined' && ch.type.toLowerCase() == 'image' && !/(php|htm[l]?|asp[x]?)[\"\'\)]/i.test(chsrc) && !/(php|htm[l]?|asp[x]?)[\"\'\)]/i.test(bgim)  && (/(\/|http|url)/ig.test(chsrc) || /gradient/i.test(bgim))) {
+                im = new Image();
+                src = chsrc.replace(/url\((['"])?(.*?)\1\)/gi, '$2');
+		im.src = src;
+		/*im.decode().then(() => {
+		wi = parseInt(im.width);
+		he = parseInt(im.height);
+		imar[nc] = wi*he;
+		});*/
+		waitForImage(im).then((res) => {
+		});;
+		wi = parseInt(im.naturalWidth);
+		he = parseInt(im.naturalHeight);
+		if (wi == 0 && he == 0) {
 		wi = parseInt(ch.getBoundingClientRect().width);
 		he = parseInt(ch.getBoundingClientRect().height);
-		imar[nc] = parseInt(ch.width) * parseInt(ch.height);
-		if (parseInt(ch.width) > 499 && parseInt(ch.height) > 139) b_imgforce[nc] = true;
-		if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && imar[nc] < 35000) return false;
+		}
+		imar[nc] = wi*he;
+		if (wi > 499 && he > 99) b_imgforce[nc] = true;
+		if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && imar[nc] < 400) return false;
 		return true;
 	} else {
 		return false;
@@ -445,7 +626,7 @@ function parentStyle(node,reg) {
 	let b_found = false;
 	while (pch && !/\b(BODY|HTML)/i.test(pch.nodeName)) {
 		if (pch && pch.getAttribute)
-		if (!reg.test(pch.getAttribute('style'))) {
+		if (!reg.test(pch.getAttribute('style')) && !reg.test(pch.style.filter)) {
 			pch = pch.parentNode;
 			continue;
 		} else {
@@ -599,9 +780,9 @@ function getCSS(cfg) {
 //			f2_sizes[c] = "calc(" + cc + "px + " + pcent + "%)";
 			f2_sizes[c] = cc2 + "px";
 		}
-		str_style = `brightness(${brght}%) contrast(${ctrst}%)`;
-		str_style2 = `1`;
 	}
+	str_style = `brightness(${brght}%) contrast(${ctrst}%)`;
+	str_style2 = '1';
 
 	return `${bold}${size_inc}${form_border}${underline}${cust}`;
 }
@@ -722,14 +903,13 @@ function start(cfg, url)
 		'STYLE',
 		'VIDEO',
 		'AUDIO',
-		'IMG',
 		'SVG',
 		'EMBED',
 		'OBJECT',
 		'SOURCE',
 		'CANVAS',
 		'NOSCRIPT',
-		'undefined'
+		'UNDEFINED'
 	];
 
 	let colors_to_skip  = [
@@ -738,8 +918,6 @@ function start(cfg, url)
 	];
 
 	let hdr_tags = ['H1', 'H2', 'H3', 'H4'];
-	if (cfg.skipHeadings)
-		tags_to_skip.push(...hdr_tags);
 
 	if (cfg.skipWhites) {
 		let white = [
@@ -763,16 +941,18 @@ function start(cfg, url)
 	let m_bocol = new Map();
 	let m_sty = {};
 	let b_emo = {};
-	let b_noemo = false;
+	let b_noemo = true;
 	let b_idone = {};
 	let b_cdone = {};
 	let b_rules = '';
+	let b_chk = {};
 	let n_rulecount = 0;
 	let images = [];
 	let img_area = [];
 	let map = new Map();
 	let mp = new Map();
 	let m_ss = new Map();
+	let m_done = new Map();
 	let nodes_behind_img = [];
 	let nodes_behind_inv = [];
 	let n_imgcount = 0;
@@ -840,7 +1020,7 @@ function start(cfg, url)
 		b_emo = {};
 		b_rules = '';
 		n_rulecount = 0;
-		b_noemo = false;
+		b_noemo = true;
 		b_idone = {};
 		images = [];
 		img_area = [];
@@ -869,21 +1049,30 @@ function start(cfg, url)
 			var n;
 			for (let x=0; x < nodes.length; x++) {
 			n = nodes[x];
+			let t = n.nodeName.toUpperCase();
+			if (tags_to_skip.includes(t)) {
+				let chln = n.getElementsByTagName('*');
+				for (let ch of chln) {
+					if (!tags_to_skip.includes(ch.nodeName.toUpperCase()))
+						tags_to_skip.push(ch.nodeName.toUpperCase());
+				}
+			}
+			if (tags_to_skip.includes(t) || (cfg.skipHeadings && hdr_tags.includes(t))) continue;
 			nc++;
 			map.set(n, nc);
 			b_ctext[nc] = containsText(n, mp);
 			b_iimg[nc] = isImage(n, nc, img_area);
 			if (b_iimg[nc]) images.push(n);
 			if (cfg.forcePlhdr && cfg.normalInc && mutation) {
-				let ps = parentStyle(n,/filter\W*invert/);
-				if (ps) nodes_behind_inv.push(n);
+				let ps = parentStyle(n,/invert/i);
+				if (ps) nodes_behind_inv.push(Array.from(n.getElementsByTagName('*')));
 			}
 			}
 			for (let x=0; x < images.length; x++) {
 			n = images[x];
 			nc = map.get(n);
 			let img_children = Array.from(n.getElementsByTagName("*"));
-			if (img_area[nc] > 35000 && img_area[nc] < 5000000) {
+			if (img_area[nc] > 400 && img_area[nc] < 90000000) {
 				nodes_behind_img.push(...img_children);
 				n_imgcount++;
 			}
@@ -892,7 +1081,7 @@ function start(cfg, url)
 			}
 		}
 		var doc = document;
-		if (!cfg.ssrules) {
+/**		if (!cfg.ssrules) {
 		let sheets = doc.styleSheets;
 		for (let j =0; j < sheets.length; j++ ) {
 			try {
@@ -905,7 +1094,7 @@ function start(cfg, url)
 					if (/font(-size)?/i.test(ruleList[i].style.cssText))
 					if (fsz > 1 && fsz <= cfg.threshold ) {
 						if (/\b(BODY|HTML|\-\-root)/i.test(ruleList[i].selectorText) && cfg.advDimming) {
-							let tmp = f_sizes[fsz].replace(/filter.*brightness.*contrast[^;]*/mg, '');
+							let tmp = f_sizes[fsz].replace(/filter.*brightness.*contrast[^;]* /mg, '');
 							sheets[j].insertRule(ruleList[i].selectorText + "{" + tmp + "}", ruleList.length);
 							b_csp = false;
 						} else {
@@ -921,12 +1110,11 @@ function start(cfg, url)
 				break;
 			}
 		}
-		}
+		}*/
 		let rn = 0;
 		if (cfg.ssrules) {
-		let m_sec = {};
-		let m_count = {};
 		let b_sec = false;
+		let rootsty = getComputedStyle(document.documentElement);
 		let body_nfz = 16;
 		let bcs = getComputedStyle(document.body);
 		if (bcs.fontSize && /\d.*?px/i.test(bcs.fontSize))
@@ -935,21 +1123,145 @@ function start(cfg, url)
 			try {
 			var sheet = document.styleSheets[si];
 			var rules = sheet.cssRules;
+			let rl = rules.length;
+			let ri = 0;
+			for (ri = 0; ri < rl; ri++) {
 			b_sec = false;
-			for (var ri = 0; ri < rules.length; ri++) {
-				var rule= rules[ri];
-			var txtrul = '';
-				if (rule.href) { rules = rule.styleSheet.cssRules; ri = 0;continue; }
+			let rule= rules[ri];
+			let fgr = '';
+			let txtrul = '';
+			let txtrul2 = '';
+				if (rule.href) { rules = rule.styleSheet.cssRules; ri = 0; rl = rules.length;continue; }
 				if (rule.selectorText && rule.style) {
 				let key = rule.selectorText;
 				let value = rule.style.cssText;
-			if (cfg.forcePlhdr && cfg.normalInc && (rule.style.color || rule.style.backgroundColor || rule.style.borderColor)) {
-				m_count[sheet] = true;
+			if ((cfg.forcePlhdr && cfg.normalInc) || cfg.advDimming)
+			if (m_done.get(key) != true && (rule.style.color || rule.style.backgroundColor || rule.style.borderColor)) {
+				m_done.set(key, true);
+				if (/\:(before|after)/i.test(key)) {
+					if (rule.style.color) {
+						if (/var\(/i.test(rule.style.color)) {
+						let a = rule.style.getPropertyValue('color');
+						let a1 = a.replace(/var\((.*?)\)/i, `$1`).trim();
+						let b = rootsty.getPropertyValue(a1);
+						if (!/rgb/i.test(b))
+						if (b.indexOf('#') >= 0) {
+							let c = b.length == 4 ? b+'f' : b+'ff';
+							b = hexToRGBA(c);
+						}
+						let fgarr = getRGBarr(b);
+						if (typeof fgarr[3] == 'undefined') fgarr[3] = 1.0;
+						var fgr1;
+						if (cfg.advDimming)
+							fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], g_m);
+						else
+							fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
+						fgr1[3] = fgarr[3];
+						if (cfg.normalInc2)
+							fgr = colorblindFg(fgr1, cfg, false, false, 10, b_forced);
+						else
+							fgr = 'rgba('+fgr1[0]+','+fgr1[1]+','+fgr1[2]+','+fgr1[3]+')';
+						rule.style.setProperty('color',fgr,'important');
+						} else if (/rgba?/i.test(rule.style.color)) {
+						let fgarr = getRGBarr(rule.style.color);
+						if (typeof fgarr[3] == 'undefined') fgarr[3] = 1.0;
+						var fgr1;
+						if (cfg.advDimming)
+							fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], g_m);
+						else
+							fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
+						fgr1[3] = fgarr[3];
+						if (cfg.normalInc2)
+							fgr = colorblindFg(fgr1, cfg, false, false, 10, b_forced);
+						else
+							fgr = 'rgba('+fgr1[0]+','+fgr1[1]+','+fgr1[2]+','+fgr1[3]+')';
+						rule.style.setProperty('color',fgr,'important');
+						}
+					}
+					if (rule.style.backgroundColor) {
+						if (/var\(/i.test(rule.style.backgroundColor)) {
+						let a = rule.style.getPropertyValue('background-color');
+						let a1 = a.replace(/var\((.*?)\)/i, `$1`).trim();
+						let b = rootsty.getPropertyValue(a1);
+						if (!/rgb/i.test(b))
+						if (b.indexOf('#') >= 0) {
+							let c = b.length == 4 ? b+'f' : b+'ff';
+							b = hexToRGBA(c);
+						}
+						let fgarr = getRGBarr(b);
+						if (typeof fgarr[3] == 'undefined') fgarr[3] = 1.0;
+						var fgr1;
+						if (cfg.advDimming)
+							fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], g_m);
+						else
+							fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
+						fgr1[3] = fgarr[3];
+						if (cfg.normalInc2)
+							fgr = colorblindBg(fgr1, cfg, false, false, 10, b_forced);
+						else
+							fgr = 'rgba('+fgr1[0]+','+fgr1[1]+','+fgr1[2]+','+fgr1[3]+')';
+						rule.style.setProperty('background-color',fgr,'important');
+						} else if (/rgba?/i.test(rule.style.backgroundColor)) {
+						let fgarr = getRGBarr(rule.style.backgroundColor);
+						if (typeof fgarr[3] == 'undefined') fgarr[3] = 1.0;
+						var fgr1;
+						if (cfg.advDimming)
+							fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], g_m);
+						else
+							fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
+						fgr1[3] = fgarr[3];
+						if (cfg.normalInc2)
+							fgr = colorblindBg(fgr1, cfg, false, false, 10, b_forced);
+						else
+							fgr = 'rgba('+fgr1[0]+','+fgr1[1]+','+fgr1[2]+','+fgr1[3]+')';
+						rule.style.setProperty('background-color',fgr,'important');
+						}
+					}
+					if (rule.style.borderColor) {
+						if (/var\(/i.test(rule.style.borderColor)) {
+						let a = rule.style.getPropertyValue('border-color');
+						let a1 = a.replace(/var\((.*?)\)/i, `$1`).trim();
+						let b = rootsty.getPropertyValue(a1);
+						if (!/rgb/i.test(b))
+						if (b.indexOf('#') >= 0) {
+							let c = b.length == 4 ? b+'f' : b+'ff';
+							b = hexToRGBA(c);
+						}
+						let fgarr = getRGBarr(b);
+						if (typeof fgarr[3] == 'undefined') fgarr[3] = 1.0;
+						var fgr1;
+						if (cfg.advDimming)
+							fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], g_m);
+						else
+							fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
+						fgr1[3] = fgarr[3];
+						if (cfg.normalInc2)
+							fgr = colorblindFg(fgr1, cfg, false, false, 10, b_forced);
+						else
+							fgr = 'rgba('+fgr1[0]+','+fgr1[1]+','+fgr1[2]+','+fgr1[3]+')';
+						rule.style.setProperty('border-color',fgr,'important');
+						} else if (/rgba?/i.test(rule.style.borderColor)) {
+						let fgarr = getRGBarr(rule.style.borderColor);
+						if (typeof fgarr[3] == 'undefined') fgarr[3] = 1.0;
+						var fgr1;
+						if (cfg.advDimming)
+							fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], g_m);
+						else
+							fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
+						fgr1[3] = fgarr[3];
+						if (cfg.normalInc2)
+							fgr = colorblindFg(fgr1, cfg, false, false, 10, b_forced);
+						else
+							fgr = 'rgba('+fgr1[0]+','+fgr1[1]+','+fgr1[2]+','+fgr1[3]+')';
+						rule.style.setProperty('border-color',fgr,'important');
+						}
+					}
+				} else {
 				if (rule.style.color && rule.style.color.substring(0,3) == 'rgb') {
 				let fgarr = getRGBarr(rule.style.color);
 				if (typeof fgarr[3] == 'undefined') fgarr[3] = 1.0;
 				if (typeof m_sty[fgarr] == 'undefined') {
-					let fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
+					fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
 					m_sty[fgarr] = [fgr[0],fgr[1],fgr[2],fgarr[3]];
 				}
 				}
@@ -957,7 +1269,7 @@ function start(cfg, url)
 				let fgarr = getRGBarr(rule.style.backgroundColor);
 				if (typeof fgarr[3] == 'undefined') fgarr[3] = 1.0;
 				if (typeof m_sty[fgarr] == 'undefined') {
-					let fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
+					fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
 					m_sty[fgarr] = [fgr[0],fgr[1],fgr[2],fgarr[3]];
 				}
 				}
@@ -965,17 +1277,17 @@ function start(cfg, url)
 				let fgarr = getRGBarr(rule.style.borderColor);
 				if (typeof fgarr[3] == 'undefined') fgarr[3] = 1.0;
 				if (typeof m_sty[fgarr] == 'undefined') {
-					let fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
+					fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], g_m);
 					m_sty[fgarr] = [fgr[0],fgr[1],fgr[2],fgarr[3]];
+				}
 				}
 				}
 			}
 			if (/(\bbody|\bhtml|\[s__)/i.test(key)) continue;
 			if (typeof m_ss.get(key) == 'undefined' && cfg.threshold > 0 && cfg.size > 0 && rule.style.fontSize) {
-				m_count[sheet] = true;
 				let b_set = false;
 				if (/[\d\.]+.*?px/i.test(rule.style.fontSize)) {
-				let rt = rule.style.fontSize.replace(/px/ig, '');
+				const rt = rule.style.fontSize;
 				let nfz = parseInt(rt);
 				if (nfz <= cfg.threshold && nfz > 1) {
 				txtrul = key+' { '+f_sizes[nfz]+' }';
@@ -984,7 +1296,7 @@ function start(cfg, url)
 				n_rulecount++;
 				}
 				} else if (/[\d\.]+.*?pt/i.test(rule.style.fontSize)) {
-				let rt = rule.style.fontSize.replace(/pt/ig, '');
+				const rt = rule.style.fontSize;
 				let nfz = parseInt(parseFloat(rt)*1.333334);
 				if (nfz <= cfg.threshold && nfz > 1) {
 				txtrul = key+' { '+f_sizes[nfz]+' }';
@@ -993,7 +1305,7 @@ function start(cfg, url)
 				n_rulecount++;
 				}
 				} else if (/[\d\.]+.*?r?em/i.test(rule.style.fontSize)) {
-				let rt = rule.style.fontSize.replace(/r?em/ig, '');
+				const rt = rule.style.fontSize;
 				let nfz = parseInt(parseFloat(rt)*body_nfz);
 				if (nfz <= cfg.threshold && nfz > 1) {
 				txtrul = key+' { '+f_sizes[nfz]+' }';
@@ -1011,20 +1323,32 @@ function start(cfg, url)
 					}
 				}
 			}
+			if (!txtrul && typeof b_chk[value] == 'undefined' && cfg.threshold > 0 && cfg.size > 0 && rule.style.fontSize) {
+				b_chk[value] = true;
+					if (/\d+.*?px/i.test(rule.style.fontSize)) {
+					let fsz = parseInt(rule.style.fontSize);
+					if (fsz > 1 && fsz <= cfg.threshold) {
+						txtrul = key + ' { ' + f_sizes[fsz] + ' }';
+						}
+					}
 			}
-			if (!b_sec && txtrul.length > 0) {
-				sheet.insertRule(txtrul, rules.length);
+			if (cfg.forcePlhdr && cfg.forceIInv)
+			if (rule.style.content && /url\(/i.test(rule.style.content)) {
+				rule.style.setProperty('filter','invert(1)','important');
+			}
+			}
+			if (!b_sec && txtrul) {
+				style_node.sheet.insertRule(txtrul, 0);
 				b_sec = false;
 			}
 
 			}
 			} catch (error) {
 				console.log('cssrules security   !');
-				m_sec[sheet] = true;
 				b_sec = true;
 			}
 		}
-		if (n_rulecount < 2) { console.log('Rules cleared'); b_rules = ''; n_rulecount = 0; }
+		if (n_rulecount < 2 && b_rules) { console.log('Rules cleared'); b_rules = ''; n_rulecount = 0; }
 		}
 
 		if (cfg.forcePlhdr && cfg.forceIInv) {
@@ -1036,6 +1360,7 @@ function start(cfg, url)
 		}
 		let ms = null;
 		let cmap = [];
+		b_noemo = false;
 		if (doc.body != null && doc.body.innerText != null)
 			ms = doc.body.innerText.match(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/mgu);
 		if (ms != null && ms.length > 0) {
@@ -1096,7 +1421,7 @@ function start(cfg, url)
 			let img = images[x];
 //				if (/INPUT/i.test(img.nodeName) && (img.type == null || !/image/i.test(img.type))) continue;
 			n_c = map.get(img);
-			let p_s = parentStyle(img,/filter\W*invert/i);
+			let p_s = parentStyle(img,/invert/i);
 			let cst = getComputedStyle(img);
 			if (nodes_behind_inv.includes(img)) {
 				img.style.setProperty('filter','unset', 'important');
@@ -1105,10 +1430,14 @@ function start(cfg, url)
 			let isty = img.style.getPropertyValue('filter');
 			var pisty = '';
 			if (img.parentNode) pisty = img.parentNode.style.getPropertyValue('filter');
-			let bgim = cst.backgroundImage ? cst.backgroundImage : '';
+			let bgim = cst.backgroundImage;
+			if (!bgim || /none/i.test(bgim))
+				bgim = '';
 			let imsrc = img.src ? img.src : '';
+			if (!imsrc || imsrc == 'none')
+				imsrc = '';
 			if (!b_imgforce[n_c] || b_ctext[n_c] > 95)
-			if (!/(IMG|SVG|VIDEO|OBJECT|EMBED|CANVAS)/i.test(img.nodeName) && !/(slide|banner|background.*page|page.*background)/ig.test(img.className) && ((typeof imsrc != 'undefined' && imsrc != null && imsrc != '' && !/(\/|http|url)/ig.test(imsrc) && /gradient/i.test(bgim)) || (typeof bgim != 'undefined' && bgim != '' && bgim != 'none' && !/(\/|http|url|gradient)/ig.test(bgim)) || (b_ctext[n_c] > 95 && !b_imgforce[n_c]) && !/gradient/i.test(bgim)) || (((img.textContent.indexOf(' ') > 0 && b_ctext[n_c] > 0 && !/gradient/i.test(bgim) && !/\b(A|INPUT)/i.test(img.nodeName) && !/button/i.test(img.className)) || /nav/i.test(img.className)) && !b_imgforce[n_c] && img_area[n_c] < 35000 && img_area[n_c] >= 0)) {
+			if (!/(IMG|SVG|VIDEO|OBJECT|EMBED|CANVAS)/i.test(img.nodeName) && !/(slide|banner|background.*page|page.*background)/ig.test(img.className) && ((typeof imsrc != 'undefined' && imsrc != null && imsrc != '' && !/(\/|http|url)/ig.test(imsrc) && /gradient/i.test(bgim)) || (typeof bgim != 'undefined' && bgim != '' && bgim != 'none' && !/(\/|http|url|gradient)/ig.test(bgim)) || (b_ctext[n_c] > 95 && !b_imgforce[n_c]) && !/gradient/i.test(bgim)) || (((img_area[n_c] > 0 && img_area[n_c] < 250 && !/gradient/i.test(bgim) && !/button/i.test(img.className)) || /nav/i.test(img.className)) && !b_imgforce[n_c] && img_area[n_c] < 250 && img_area[n_c] > 0)) {
 				if (!(hdr && hdr.contains(img))) {
 				img.style.setProperty('filter','unset', 'important');
 				continue;
@@ -1138,7 +1467,7 @@ function start(cfg, url)
 				img.style.setProperty('filter','unset','important');
 				continue;
 			}
-			if (!nn_reg.test(isty) && !nn_reg.test(pisty) && !p_s && (!containsImage(img, images) || b_imgforce[n_c] || ((!b_chimg[n_c] && hdr != null && hdr.contains(img)) || /image/i.test(img.type) || bgim.length > 0 || imsrc.length > 0 || b_chimg[n_c])))
+			if (!nn_reg.test(isty) && !nn_reg.test(pisty) && !p_s && (!containsImage(img, images) || b_imgforce[n_c] || ((!b_chimg[n_c] && hdr != null && hdr.contains(img)) || /image/i.test(img.type) || bgim || imsrc || b_chimg[n_c])))
 				if (!(/\b(UL|OL)/i.test(img.nodeName) && img.childNodes.length < 4)) {
 					img.style.setProperty('filter','invert(1)','important');
 					let chldn = Array.from(img.getElementsByTagName('*'));
@@ -1187,20 +1516,7 @@ function start(cfg, url)
 			let tag = String(node.nodeName.toUpperCase());
 			let pnode = node.parentNode;
 			let sk = false;
-
-			if (cfg.ssrules && n_rulecount > 0) {
-			let cnames = node.className.length > 0 ? node.className.split(/\s+/) : [];
-			let style = getComputedStyle(node);
-			if (style.fontSize && !f2_sizes.includes(style.fontSize)) {
-				sk = false;
-			} else if (node.id.length > 0 && b_rules.indexOf(node.id+'||') > 0) {
-				sk = true;
-			} else if (node.className.length > 0 && (b_rules.indexOf(cnames[0]+'||') > 0 || b_rules.indexOf(cnames[1]+'||') > 0 || b_rules.indexOf(cnames[2]+'||') > 0 || b_rules.indexOf(cnames[3]+'||') > 0 || b_rules.indexOf(cnames[4]+'||') > 0 || b_rules.indexOf(cnames[5]+'||') > 0)) {
-				sk = true;
-			} else if (b_rules.search('\\b'+tag.toLowerCase()+'||') > 0 || b_rules.search('\\b'+tag+'||') > 0) {
-				sk = true;
-			}
-			}
+			var style, is_oinput, is_xinput;
 
 			if (/I?FRAME\b/i.test(tag)) {
 				let fsty = node.style.getPropertyValue('filter');
@@ -1231,11 +1547,36 @@ function start(cfg, url)
 				pnode.style.setProperty('background-color',fsty);
 			}
 
-			if (tags_to_skip.includes(tag)) return;
+			if (tags_to_skip.includes(tag) || (cfg.skipHeadings && hdr_tags.includes(tag))) return;
+
+			if (cfg.ssrules && n_rulecount > 0) {
+			let cnames = node.className.length > 0 ? node.className.split(/\s+/) : [];
+			style = getComputedStyle(node);
+			if (style.fontSize && !f2_sizes.includes(style.fontSize)) {
+				sk = false;
+			} else if (node.id.length > 0 && b_rules.indexOf(node.id+'||') > 0) {
+				sk = true;
+			} else if (node.className.length > 0 && (b_rules.indexOf(cnames[0]+'||') > 0 || b_rules.indexOf(cnames[1]+'||') > 0 || b_rules.indexOf(cnames[2]+'||') > 0 || b_rules.indexOf(cnames[3]+'||') > 0 || b_rules.indexOf(cnames[4]+'||') > 0 || b_rules.indexOf(cnames[5]+'||') > 0)) {
+				sk = true;
+			} else if (b_rules.search('\\b'+tag.toLowerCase()+'||') > 0 || b_rules.search('\\b'+tag+'||') > 0) {
+				sk = true;
+			}
+			}
+
+			if (typeof style == 'undefined')
+				style = getComputedStyle(node);
 
 			node_count = map.get(node);
 
-			let style = getComputedStyle(node);
+			if (/(INPUT|TEXTAREA|SELECT)/.test(tag)) {
+				is_xinput = node.type && /(checkbox|color|date|hidden|submit|image|month|radio|range)/i.test(node.type);
+				is_oinput = node.type && /(text|number|email|password|date|time|week|url|tel|search|select|month)/i.test(node.type);
+			}
+
+			if (cfg.input_border && !(cfg.advDimming && cfg.underlineLinks)) {
+				if (/(INPUT|TEXTAREA|SELECT)/.test(tag) && is_oinput)
+					node.setAttribute('b__', '');
+			}
 
 			if (cfg.normalInc && cfg.forcePlhdr && !b_iimg[node_count] && !nodes_behind_inv.includes(node) && typeof m_fcol.get(node) == 'undefined' && typeof m_bcol.get(node) == 'undefined' && typeof m_bocol.get(node) == 'undefined') {
 				var cs,pcs;
@@ -1375,9 +1716,6 @@ function start(cfg, url)
 					doc_obs.observe(document.body, { childList: true, subtree: true });
 			}
 
-			let is_xinput = node.type && /(checkbox|color|date|hidden|submit|image|month|radio|range)/i.test(node.type);
-			let is_oinput = node.type && /(text|number|email|password|date|time|week|url|tel|search|month)/i.test(node.type);
-
 			if (!sk || is_oinput) {
 			if (b_fnt[node_count] == false && cfg.threshold > 0 && (!b_iimg[node_count] || b_ctext[node_count] > 0)) {
 				b_fnt[node_count] = true;
@@ -1454,76 +1792,15 @@ function start(cfg, url)
 			if (cfg.threshold > 0 && (!b_iimg[node_count] || b_ctext[node_count] > 0)) {
 				let nsty = node.getAttribute('style');
 				if (nsty == null) nsty = '';
-				if (cfg.normalInc2) {
+				if (cfg.normalInc2)
+				if (style.color || style.backgroundColor || style.borderColor) {
 					let col = getRGBarr(style.color);
 					if (typeof col[3] == 'undefined') col[3] = 1;
 					col = [parseInt(col[0]), parseInt(col[1]), parseInt(col[2]), parseInt(col[3])];
 					let cful = calcColorfulness(col);
 					let pcol = col;
 					if (typeof b_idone[style.color] == 'undefined' && col.length > 0 && cful >= 24) {
-						let cmin = Math.min(col[0],col[1],col[2]);
-						let cmax = Math.max(col[0],col[1],col[2]);
-						if (cfg.forcePlhdr && n_inv > 2 && !nodes_behind_inv.includes(node) && !/invert/.test(style.filter) && cmin != col[1]) {
-						if (col[0] >= col[2]) {
-							let blu = col[1];
-							col[1] = col[2];
-							col[2] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						} else if (col[2] > col[0]) {
-							let blu = col[1];
-							col[1] = col[0];
-							col[0] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						}
-						} else if (cfg.forcePlhdr && n_inv > 2 && (nodes_behind_inv.includes(node) || /invert/.test(style.filter)) && cmax != col[1]) {
-						if (col[0] >= col[2]) {
-							let blu = col[1];
-							col[1] = col[2];
-							col[2] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						} else if (col[2] > col[0]) {
-							let blu = col[1];
-							col[1] = col[0];
-							col[0] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						}
-						} else if (cfg.forcePlhdr && n_inv <= 2  && cmax != col[2]) {
-						if (col[0] > col[1]) {
-							let blu = col[2];
-							col[2] = col[0];
-							col[0] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						} else if (col[1] > col[0]) {
-							let blu = col[2];
-							col[2] = col[1];
-							col[1] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						}
-						} else if (!b_forced && !cfg.forcePlhdr && cfg.advDimming && cmin != col[1]) {
-						if (col[2] >= col[0]) {
-							let blu = col[1];
-							col[1] = col[2];
-							col[2] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						} else if (col[0] > col[2]) {
-							let blu = col[1];
-							col[1] = col[0];
-							col[0] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						}
-						} else if (!cfg.forcePlhdr && cmax != col[2]) {
-						if (col[0] > col[1]) {
-							let blu = col[2];
-							col[2] = col[0];
-							col[0] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						} else if (col[1] > col[0]) {
-							let blu = col[2];
-							col[2] = col[1];
-							col[1] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						}
-						}
+						pcol = colorblindFg(col, cfg, nodes_behind_inv.includes(node), /invert/.test(style.filter), n_inv, b_forced);
 					} else if (typeof b_idone[style.color] != 'undefined') {
 						pcol = b_idone[style.color];
 					}
@@ -1537,65 +1814,27 @@ function start(cfg, url)
 					cful = calcColorfulness(col);
 					pcol = col;
 					if (typeof b_idone[style.backgroundColor] == 'undefined' && col.length > 0 && cful >= 24) {
-						let cmin = Math.min(col[0],col[1],col[2]);
-						let cmax = Math.max(col[0],col[1],col[2]);
-						if (cfg.forcePlhdr && !nodes_behind_inv.includes(node) && !/invert/.test(style.filter) && cmin != col[2]) {
-						if (col[1] >= col[0]) {
-							let blu = col[2];
-							col[2] = col[0];
-							col[0] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						} else if (col[0] > col[1]) {
-							let blu = col[2];
-							col[2] = col[1];
-							col[1] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						}
-						} else if (!b_forced && !cfg.forcePlhdr && cfg.advDimming && cmax != col[2]) {
-						if (col[0] >= col[1]) {
-							let blu = col[2];
-							col[2] = col[0];
-							col[0] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						} else if (col[1] > col[0]) {
-							let blu = col[2];
-							col[2] = col[1];
-							col[1] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						}
-						} else if (cfg.forcePlhdr && (nodes_behind_inv.includes(node) || /invert/.test(style.filter)) && cmax != col[2]) {
-						if (col[0] > col[1]) {
-							let blu = col[2];
-							col[2] = col[0];
-							col[0] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						} else if (col[1] > col[0]) {
-							let blu = col[2];
-							col[2] = col[1];
-							col[1] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						}
-						} else if (!cfg.forcePlhdr && cmax != col[2]) {
-						if (col[0] > col[1]) {
-							if (col[0] > col[1]) {
-							let blu = col[2];
-							col[2] = col[0];
-							col[0] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-						} else if (col[1] > col[0]) {
-							let blu = col[2];
-							col[2] = col[1];
-							col[1] = blu;
-							pcol = 'rgba('+col[0]+','+col[1]+','+col[2]+','+col[3]+')';
-							}
-						}
-						}
+						pcol = colorblindBg(col, cfg, nodes_behind_inv.includes(node), /invert/.test(style.filter), n_inv, b_forced);
 					} else if (typeof b_idone[style.backgroundColor] != 'undefined') {
 						pcol = b_idone[style.backgroundColor];
 					}
 					if (/^rgba/.test(pcol)) { 
 						b_idone[style.backgroundColor] = pcol;
 						node.style.setProperty('background-color', pcol,'important');
+					}
+					col = getRGBarr(style.borderColor);
+					if (typeof col[3] == 'undefined') col[3] = 1;
+					col = [parseInt(col[0]), parseInt(col[1]), parseInt(col[2]), parseInt(col[3])];
+					cful = calcColorfulness(col);
+					pcol = col;
+					if (typeof b_idone[style.borderColor] == 'undefined' && col.length > 0 && cful >= 24) {
+						pcol = colorblindFg(col, cfg, nodes_behind_inv.includes(node), /invert/.test(style.filter), n_inv, b_forced);
+					} else if (typeof b_idone[style.borderColor] != 'undefined') {
+						pcol = b_idone[style.borderColor];
+					}
+					if (/^rgba/.test(pcol)) { 
+						b_idone[style.borderColor] = pcol;
+						node.style.setProperty('border-color', pcol,'important');
 					}
 				}
 				if (!cfg.skipHeights && !is_xinput && b_ctext[node_count] > 2 && (node.getElementsByTagName('*').length < 4 || (cfg.start3 && node.hasAttribute(focalAnchors.attrNameContainer) && node.getElementsByTagName('*').length < 50)))
@@ -1640,23 +1879,15 @@ function start(cfg, url)
 					}
 					if (!node.disabled && cfg.strength % 2 == 1 && (/(TEXTAREA|TEXT)/i.test(tag) || is_oinput)) {
 					let txtcolor = style.color;
-					let bgcolor = style.backgroundColor;
 					if (txtcolor == null || txtcolor.length < 1) txtcolor = 'rgb(0,0,0)';
-					if (bgcolor == null || bgcolor.length < 1) bgcolor = 'rgb(255,255,255)';
 					let txt_brt = calcBrightness(getRGBarr(txtcolor));
-					let bg_brt = calcBrightness(getRGBarr(bgcolor));
-					let brtdiff = Math.abs(txt_brt - bg_brt);
-					if (brtdiff > 60 && (txt_brt || bg_brt))
-					if (brtdiff > 60 && bg_brt < txt_brt)
+					if (txt_brt > 176)
 						txtcolor = 'white';
-					else if (brtdiff > 60 && bg_brt > txt_brt)
+					else
 						txtcolor = 'black';
-					let txtstyle = ';color:'+txtcolor+'!important;';
-					nsty = node.getAttribute('style');
-					if (nsty == null) nsty = '';
-					if (cfg.forcePlhdr && cfg.forceIInv && !nn_reg.test(nsty)) nsty = ';filter:unset!important;'+nsty;
-					nsty += txtstyle;
-					node.setAttribute('style', nsty);
+					node.style.setProperty('color',txtcolor,'important');
+					if (cfg.forcePlhdr && cfg.forceIInv && /invert/.test(style.filter))
+						node.style.setProperty('filter','unset','important');
 					}
 					nsty = node.getAttribute('style');
 					if (nsty == null) nsty = '';
@@ -1671,12 +1902,7 @@ function start(cfg, url)
 				node.nextSibling.textContent = upperTxt;
 			}
 */
-			if (cfg.input_border && !(cfg.advDimming && cfg.underlineLinks)) {
-				if(/(INPUT|TEXTAREA|SELECT)/i.test(tag) && is_oinput)
-					node.setAttribute('b__', '');
-			}
-
-			if (b_ctext[node_count] < 1)
+			if (b_ctext[node_count] < 1 && node.children.length == 0)
 				return;
 
 			let is_link  = tag === 'A';
@@ -1723,8 +1949,8 @@ function start(cfg, url)
 				let contrast          = Math.abs(bg_brt - fg_brt);
 				let fg_colorfulness   = calcColorfulness(rgba_arr);
 				let min_contrast      = 40 + (cfg.strength / 2);
-				let min_link_contrast = 80 + (cfg.strength / 2);
-				let min_colorfulness  = 64;
+				let min_link_contrast = 40 + (cfg.strength / 2);
+				let min_colorfulness  = 63;
 
 				if (is_link)
 					min_contrast = min_link_contrast;
