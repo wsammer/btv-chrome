@@ -44,7 +44,6 @@ body
 {
     width: 380px;
     border-radius: 5px;
-    padding-bottom: 0.25em;
     height: 0.9em;
     margin-bottom: -3px;
 }
@@ -84,9 +83,9 @@ input[type="range"]::-webkit-slider-thumb {
 	display:flex;
 	justify-content:center;
 
-	padding-top:1em;
-	padding-bottom:1em;
-	height:1.35em;
+	padding-top:0.6em;
+	padding-bottom:0.3em;
+	height:1.2em;
 
 	position:relative;
 	z-index:1;
@@ -96,7 +95,7 @@ input[type="range"]::-webkit-slider-thumb {
 	z-index:3;
 	
 	font-size: 100%;
-	font-family: 'Cambria', 'Ubuntu', sans-serif;
+	font-family: 'Helvetica', sans-serif;
 	font-style: normal;
 	color: navy;
 	transition: opacity ease-out 0.1s;
@@ -108,7 +107,7 @@ input[type="range"]::-webkit-slider-thumb {
 #refreshBtn
 {
 	position:absolute;
-	bottom:0.3em;
+	bottom:-0.3em;
 	opacity:0;
 	z-index:2;
 	
@@ -139,6 +138,7 @@ input[type="range"]::-webkit-slider-thumb {
     flex-flow: row wrap;
     justify-content:space-between;
     font-size:0.97em;
+    margin-bottom: -26px;
 }
 .separator{
     margin-right:0.1em;
