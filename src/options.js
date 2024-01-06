@@ -168,11 +168,11 @@ function init()
 		if (typeof brt_slider != 'undefined' && brt_slider != null && typeof brt_slider.value != 'undefined')
 			brt_slider.value      = items.brightness;
 		if (typeof brt_label != 'undefined' && brt_label != null && typeof brt_label.innerText != 'undefined')
-			brt_label.innerText   = items.brightness;
+			brt_label.innerText   = (parseInt(items.brightness)+50);
 		if (typeof con_slider != 'undefined' && con_slider != null && typeof con_slider.value != 'undefined')
 			con_slider.value      = items.contrast;
 		if (typeof con_label != 'undefined' && con_label != null && typeof con_label.innerText != 'undefined')
-			con_label.innerText   = items.contrast;
+			con_label.innerText   = (parseInt(items.contrast)+100);
 	});
 
 	let checks = [
@@ -491,7 +491,7 @@ function addListeners()
 
 	if (brt_slider !== null) {
 	brt_slider.oninput = () => {
-		brt_label.innerText = brt_slider.value;
+		brt_label.innerText = (parseInt(brt_slider.value)+50);
 	};
 	}
 
@@ -503,7 +503,7 @@ function addListeners()
 
 	if (con_slider !== null) {
 	con_slider.oninput = () => {
-		con_label.innerText = con_slider.value;
+		con_label.innerText = (parseInt(con_slider.value)+100);
 	};
 	}
 

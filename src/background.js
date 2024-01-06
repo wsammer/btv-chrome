@@ -24,7 +24,7 @@ chrome.runtime.onInstalled.addListener(function(details){
 			'forceIInv': true,
 			'normalInc': true,
 			'normalInc2': false,
-			'ssrules': true,
+			'ssrules': false,
 			'enableEverywhere': true
 		};
 
