@@ -146,7 +146,7 @@ input[type="range"]::-webkit-slider-thumb {
     margin-bottom:0.5em;
 }
 .separator div {
-    margin-bottom:0.35em;
+    margin-bottom:0.1em;
 }
 #sep{
     margin-left:0.1em;
@@ -207,8 +207,8 @@ input[type='checkbox'] {
 .checkmark {
     position: absolute;
     margin-left: 0.35em;
-    height: 15px;
-    width: 15px;
+    height: 11px;
+    width: 11px;
     background-color: #eee;
     border: 2px solid black;
     border-radius: 20px;
