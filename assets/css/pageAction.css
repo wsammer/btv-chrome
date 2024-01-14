@@ -138,7 +138,7 @@ input[type="range"]::-webkit-slider-thumb {
     flex-flow: row wrap;
     justify-content:space-between;
     font-size:0.97em;
-    margin-bottom: -26px;
+    margin-bottom: -18px;
 }
 .separator{
     margin-right:0.1em;
