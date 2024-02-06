@@ -158,6 +158,10 @@ input[type="range"]::-webkit-slider-thumb {
     margin-bottom:0!important;
 }
 
+.option label:first-child {
+    display: block;
+    cursor: pointer;
+}
 /*Buttons/checkmarks*/
 
 button {
@@ -190,58 +194,47 @@ button:hover {
     margin-bottom: auto;
 }
 input[type='checkbox'] {
-    float: right;
-    position: absolute;
-    opacity: 0;
-    height: 0;
-    width: 0;
+	height: 0;
+	width: 0;
+	visibility: hidden;
 }
 .container {
-    float:right;
-    position: relative;
-    margin-right: 18px;
-    cursor: pointer;
-    user-select: none;
-    margin-top: -18px;
+	cursor: pointer;
+	width: 30px;
+	height: 20px;
+	background: #000;
+	display: block;
+	border-radius: 20px;
+	margin-top: -20px;
+	position: relative;
+	float: right;
 }
-.checkmark {
-    position: absolute;
-    margin-left: 0.35em;
-    height: 11px;
-    width: 11px;
-    background-color: #eee;
-    border: 2px solid black;
-    border-radius: 20px;
-    transition: color ease-out 0.1s;
-    transition: background-color ease-out 0.1s;
-}
-.container:hover input ~ .checkmark {
-    background-color: #ccc;
-}
-.container input:checked ~ .checkmark {
-    background-color: black;
+input:checked ~ .checkmark:after {
+	margin-left: 10px;
 }
 .checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
+	content: '';
+	position: absolute;
+	top: 4px;
+	left: 4px;
+	width: 12px;
+	height: 12px;
+	background: #fff;
+	border-radius: 12px;
 }
-.container input:checked ~ .checkmark:after {
-    display: block;
+input:checked ~ .checkmark:after {
+	position: absolute;
+	background-image:url('../../assets/icons/circle.svg');
+	background-repeat: no-repeat;
+	background-size: 12px 12px;
+	background-position: 11px 0px;
+	background-color: #0f0;
+	color: #fff;
+	width: 22px;
+	left: -6px;
+	top: 4px;
 }
-.container .checkmark:after {
-    left:  6px;
-    top: 2px;
-    width: 2px;
-    height: 7px;
-    margin:0;
-    padding:0;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-}
-
-.option label:first-child {
-    display: block;
-    cursor: pointer;
+ 
+.container .checkmark:active:after {
+ 	width:  30px;
 }
