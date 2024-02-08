@@ -173,12 +173,12 @@ input[type='checkbox'] {
 .container {
 	cursor: pointer;
 	width: 30px;
-	height: 20px;
+	height: 18px;
 	background: #000;
 	display: block;
-	border-radius: 20px;
+	border-radius: 18px;
 	position: relative;
-	margin-top: 4px;
+	margin-top: 5px;
 	float: right;
 }
 input:checked ~ .checkmark:after {
@@ -187,12 +187,16 @@ input:checked ~ .checkmark:after {
 .checkmark:after {
 	content: '';
 	position: absolute;
-	top: 4px;
+	top: 3px;
 	left: 4px;
 	width: 12px;
 	height: 12px;
 	background: #fff;
 	border-radius: 12px;
+	background-image:url('../../assets/icons/circle.svg');
+	background-repeat: no-repeat;
+	background-size: 12px 12px;
+	background-position: 11px 0px;
 }
 input:checked ~ .checkmark:after {
 	position: absolute;
@@ -204,11 +208,7 @@ input:checked ~ .checkmark:after {
 	color: #fff;
 	width: 22px;
 	left: -6px;
-	top: 4px;
-}
- 
-.container .checkmark:active:after {
- 	width:  30px;
+	top: 3px;
 }
 
 .settings
