@@ -52,51 +52,18 @@
 			</ul>
 		</p>
 <p>
-<h4>NEW CHANGES</h4>
-<ul>
-<li>"Num Lock" key has to be on for "Shift + Zoom" magnification of elements under mouse to work.</li>
-<li>Holding Shift key down and moving mouse over any text area will "ZOOM" the text in that area by 175% (or by Strength % if slider is greater than zero) when "Num Lock" is on.</li>
-<li>"Force max opacity" now changes background color of BODY element only if "Force Reverse colors" is enabled AND "High contrast dark mode" is disabled. Other effect of making text totally opaque does not depend on any other options.</li>
-<li>31 Presets can be defined with custom settings of sliders and options. These presets can be loaded to quickly change the settings to particular configuration for a site.</li>
-<li>In Dark mode and Reverse colors mode, the Brightness and Contrast sliders now <b>update the colors while changing</b> instead of requiring a refesh of webpage. This works in "Dark mode" and "Reverse colors" mode, but for normal pages there is no brightness / contrast change.</li>
-<li>The "High contrast dark mode" option, when enabled even though Dark mode is disabled, does processing of text colors by newer method (which is still work in progress). Disabling it reverts the text color contrast logic to older method.</li>
-<li>Strength slider controls the "brightness" threshold below which text contrast is increased to black / white. As before, negative settings preserve colors and high positive settings create greater contrast (only if colors of text are "contrast-friendly", grey on dark background will not become white, or light color on white background become black).</li>
-<li>Option "High contrast dark mode" makes greater contrast when brighness / contrast settings are changed in Dark mode. If enabled with/without dark mode, a newer text contrast method is used. If text contrast is not working as expected, try disabling this option to revert to old method of text contrast.</li>
-<li>Fixed color reverse on some page elements in reverse colors with hue correction enabled.</li>
-<li>Brightness and Contrast values are now displayed as actual percentage, and not as previous 'offset'. This does not affect saved settings. Browser default font size is shown next to lightness of site in popup settings.</li>
-<li>Removed changing of font style in "Underline links" and "Input border". The fonts can be changed by adding custom CSS rule like below<br><code>body * { font-family: sans !important; }</code><br>Replace "sans" with "serif" for serif font.</li>
-<li>"Colorblind adjusted colors" which changes colors of text to suit colorblind condition. In dark mode or reverse colors, the text hue is changed toward green color while in normal light theme, the text is changed for blue color.</li>
-<li>Lightness value shown in popup settings.</li>
-<li>If strength is an ODD number, input textbox color is changed to black/white depending on its color.</li>
-<li>In Reverse colors the brightness and contrast sliders control brightness and contrast of text and background color.</li>
-<li>Color shades of text (and backgrounds somewhat) can be made similar to original website by enabling "Reverse colors hue correction".</li>
-<li>"Skip text height changes" avoids changing font heights of text and INPUT elements like text boxes and select boxes.</li>
-<li>New option to add custom CSS rules to the site</li>
-<li>If either of "Dark mode" or "Reverse Colors" is enabled in global options, all websites colors are changed to "dark theme" colors. If the theme calculates "Lightness" wrong, then enable both "Reverse colors" and "Dark mode" to override the wrongly computed theme.</li>
-<li>"Reverse Colors" & "Invert Image colors" correctly displays most emojis, but speed is slow.</li>
-<li>Starting 3 letters bold and ALL CAPITAL TEXT work with NON-ENGLISH languages also.</li>
-<li><b>IMPORTANT</b>: When the settings of "Font increase %" and "Font Threshold" are VERY HIGH, to make text appear MUCH BIGGER, the browser's "Text Size" Setting SHOULD ALSO BE CHANGED TO "LARGE/VERY LARGE" or "16 px to 24 px". Otherwise on some pages OVERLAPPING/CUTTING of text MAY occur.</li>
-<li><b>DO NOT ENABLE BOTH "Dark Mode" and "Force Reverse Colors".</b> This condition is not considered and there will be problems in results.</li>
-</ul>
-<ul>
-<li><b>VERY IMPORTANT WARNING</b>: If you are COPY+PASTE-ing from a page which has been changed by this plugin, DISABLE the plugin for that webpage and THEN copy + paste. Otherwise a lot of styling changes will also get pasted which is not on the original webpage.</li>
-<li>As warned below, if you are using HTML Editors in software like Wordpress or similar, disable the plugin for that website to prevent styling changes from being entered in the HTML editor.</li>
-<li>ALSO IF YOU TAKE A PRINTOUT OF WEBPAGE changed by this extension, IT MAY NOT PRINT CORRECTLY. SO KEEP THE "Disable for this site" option ENABLED when PRINTING.</li>
-<li><b>DISABLE PLUGIN</b> = Select "Disable Better Text View for this site" option on Options menu or DISABLE "Activate on all websites" in All Settings page, whichever is preferred.</li>
-</ul>
 <h4>ABOUT EXTENSION</h4>
 <b>TL;DR</b><br>
 <ul>
 <li>Font size within threshold is enlarged inversely with font size. That means small text made bigger than large text.</li>
 <li><b><em>SPEED of page processing is SLOW. There are some options to increase speed of font changes / colors and enabling / disabling any or all of - "Skip text height change" / "Skip NAV SECTION" / "Avoid colorful text" / "Reverse colors hue correction" -  can run little faster.</em></b></li>
 <li>Font Weight slider changes thin/bold-ness of ALL text, and bold and normal letters weight when "Start 3 letters bold" is enabled.</li>
-<li>ALL CAPITAL TEXT & Starting 3 letters made bold options.</li>
 <li>Dark mode changes Contrast and Brightness of "black" themed sites. Pictures are kept normal but if "High contrast dark mode" is enabled, the brightness / contrast effect is greater and images get distorted colors.</li>
-<li>"Force Reverse Colors" is a color inverter, making white background black, and black bg. white, while images are normal (unless "Invert Image colors" is disabled, which will also reverse image colors).</li>
-<li>In Reverse colors the text brightness and contrast can be changed by their sliders.</li>
+<li>In Dark mode and Reverse colors the text brightness and contrast can be changed by their sliders.</li>
+<li>The "Force Reverse Colors" option is useful for changing colors of sites to "Dark Theme" or "Dark Reader" view while preserving (most of) images' colors and background and text colors. Image colors are reversed by disabling "Invert image colors" and text / background colors change disabled by "Reverse Colors hue correction".
+<li>ALL CAPITAL TEXT option makes all webpage text in capitals and also works on NON-ENGLISH languages.</li>
+<li>Starting 3 letters bold option makes all words first 3 letters <b>bold</b> for most languages. If there are problems with some links or menus not working, enable "Skip links in 3 letters bold" option to avoid making links bold.</li>
 <li>The popup options show the "Lightness" value of current site. If less than 0.5, then it is "Dark themed", if more than 0.5, it is "Light themed". Dark themed sites can be changed by "Dark mode" while "Light themed" sites can be changed by "Reverse Colors".</li>
-<li>Enable "Skip NAV & Section" if some column of text is overlapping another column or top level menus have display problem.</li>
-<li>Enable "Skip text height change" to skip changing text heights and input elements heights.</li>
 <li>Enabling "Apply custom CSS for site" will allow you to enter custom CSS rules for the site</li>
 </ul>
 <h4>DETAILS</h4>
@@ -119,15 +86,46 @@
 <li>Reverse color hue correction changes colors to match original website in reverse colors..</li>
 <li>The text brightness and contrast can be changed by the sliders when "Reverse colors" is enabled. To revert to original brightness and contrast, set Strength to 0 and Contrast to 50.</li>
 <li>The popup options box show the "Lightness" value of current site. If less than 0.5, then it is considered "Dark themed", if more than 0.5, it is "Light themed". Dark themed site colors can be changed by "Dark mode" while "Light themed" site colors can be changed through "Reverse Colors". Some few sites may detect theme wrong, then enable BOTH Dark mode and Reverse colors to force site color changes.</li>
-<li>If "High contrast Dark mode" is enabled in Dark mode, then brightness and contrast are applied to more elements and images (which can distort colors of some images). Newer method of calculating black / white / high contrast text color is used. With "Force max opacity" background color of HTML BODY is reversed.</li>
+<li>If "High contrast Dark mode" is enabled in Dark mode, then brightness and contrast are applied to more elements and images (which can distort colors of some images). Newer method of calculating black / white / high contrast text color is used. When disabled with "Force max opacity" enabled background color of HTML BODY is reversed.</li>
 <li>The menu and large sections of webpage are increased in size according to the Font Increase % and Input elements increased by Font Threshold. If there are problems in display of menus / header imaages or large tables overlap, enable "Skip NAV & SECTION" checkbox. The "Skip NAV & SECTION" also skips applying Reverse Color to images inside NAV and HEADER elements, which are (usually) on top menu of webpage, when "Force Reverse colors" is enabled.</li>
 <li>"Skip text height changes" will not change heights of text, and INPUT elements like text and select boxes.</li>
 <li>'Colorblind adjust colors' when enabled changes text colors and background to suit colorblind condition. In dark mode or reverse colors, the text hue is changed toward green color while in normal light theme, the text is changed for blue color.</li>
 <li>Enabling "Apply custom CSS for site" will allow you to enter custom CSS rules for the site</li>
+<li>The "Disable Better Text View on this site temporarily (keep settings)" option keeps settings saved while blacklisting (making no changes) the site. If the settings on a site need to be temporarily disabled, use this option insted of "Disable Better Text View on this site".</li>
 <li>Additional features are input box borders, underlining of links, forcing maximum opacity of transparent elements and saving/loading of settings whitelists/blacklists,</li>
-<li>This extension is helpful for people who require reading glasses / spectacles due to far-sight / long-sight / hypermetropia / hyperopia condition of eyes.</li>
+<li>This extension is helpful for people who require reading glasses / spectacles due to far-sight / long-sight / hypermetropia / hyperopia condition of eyes.<b>HOWEVER IT IS NOT A SUBSTITUTE FOR READING GLASSES / OPTICAL LENSES.</b></li>
 <li><b>VERY IMPORTANT WARNING</b>: If you are COPY+PASTE-ing from a page which has been changed by this plugin, DISABLE the plugin for that webpage and THEN copy + paste. If you are editing or submitting HTML content online using a content management system like Wordpress or having an HTML Editor, DISABLE this extension for that particular site. Otherwise, the HTML will contain unwanted styling elements generated by the extension.</li>
-<li>WHEM PRINTING A WEBPAGE modified by this extension, KEEP "Disable for this site" enabled otherwise the PRINTING WON'T BE CORRECT.</li>
+<li>WHEM PRINTING A WEBPAGE modified by this extension, KEEP "Disable for this site (keep settings)" enabled otherwise the PRINTING WON'T BE CORRECT.</li>
+<li><b><em>SPEED of page processing is SLOW. There are some options to increase speed of font changes / colors and enabling / disabling any or all of - "Skip text height change" / "Skip NAV SECTION" / "Avoid colorful text" / "Reverse colors hue correction" -  can run little faster.</em></b></li>
+</ul>
+<h4>NEW CHANGES</h4>
+<ul>
+<li>New option to Disable Better Text View on a site temporarily while keeping settings instead of deleting them (which Blacklist does).</li>
+<li>Zoom % is now dynamically changed by adjusting Strength slider, without having to refresh the page.</li>
+<li>Holding Shift key down and moving mouse over any text area will "ZOOM" the text in that area by 175% (or by Strength % if slider is not zero) when "Num Lock" key is on.</li>
+<li>"Force max opacity" now changes background color of BODY element only if "Force Reverse colors" is enabled AND "High contrast dark mode" is disabled. Other effect of making text totally opaque does not depend on any other options.</li>
+<li>31 Presets can be defined with custom settings of sliders and options. These presets can be loaded to quickly change the settings to particular configuration for a site.</li>
+<li>In Dark mode and Reverse colors mode, the Brightness and Contrast sliders now <b>update the colors while changing</b> instead of requiring a refesh of webpage. This works in "Dark mode" and "Reverse colors" mode, but for normal pages there is no brightness / contrast change.</li>
+<li>The "High contrast dark mode" option, when enabled even though Dark mode is disabled, does processing of text colors by newer method (which is still work in progress). Disabling it reverts the text color contrast logic to older method.</li>
+<li>Strength slider controls the "brightness" threshold below which text contrast is increased to black / white. As before, negative settings preserve colors and high positive settings create greater contrast (only if colors of text are "contrast-friendly", grey on dark background will not become white, or light color on white background become black).</li>
+<li>Option "High contrast dark mode" makes greater contrast when brighness / contrast settings are changed in Dark mode. If enabled with/without dark mode, a newer text contrast method is used. If text contrast is not working as expected, try disabling this option to revert to old method of text contrast.</li>
+<li>Removed changing of font style in "Underline links" and "Input border". The fonts can be changed by adding custom CSS rule like below<br><code>body * { font-family: sans !important; }</code><br>Replace "sans" with "serif" for serif font.</li>
+<li>"Colorblind adjusted colors" which changes colors of text to suit colorblind condition. In dark mode or reverse colors, the text hue is changed toward green color while in normal light theme, the text is changed for blue color.</li>
+<li>If strength is an ODD number, input textbox color is changed to black/white depending on its color.</li>
+<li>Color shades of text (and backgrounds somewhat) can be made similar to original website by enabling "Reverse colors hue correction".</li>
+<li>"Skip text height changes" avoids changing font heights of text and INPUT elements like text boxes and select boxes.</li>
+<li>New option to add custom CSS rules to the site</li>
+<li>If either of "Dark mode" or "Reverse Colors" is enabled in global options, all websites colors are changed to "dark theme" colors. If the theme calculates "Lightness" wrong, then enable both "Reverse colors" and "Dark mode" to override the wrongly computed theme.</li>
+<li>"Reverse Colors" & "Invert Image colors" correctly displays most emojis, but speed is slow.</li>
+<li><b>IMPORTANT</b>: When the settings of "Font increase %" and "Font Threshold" are VERY HIGH, to make text appear MUCH BIGGER, the browser's "Text Size" Setting SHOULD ALSO BE CHANGED TO "LARGE/VERY LARGE" or "18 px to 24 px". Otherwise on some pages OVERLAPPING/CUTTING of text MAY occur.</li>
+<li><b>DO NOT ENABLE BOTH "Dark Mode" and "Force Reverse Colors".</b> This condition is not considered and there will be problems in results.</li>
+</ul>
+<h4>CAUTION AND WARNING</h4>
+<ul>
+<li><b>VERY IMPORTANT WARNING</b>: If you are COPY+PASTE-ing from a page which has been changed by this plugin, DISABLE the plugin for that webpage and THEN copy + paste. Otherwise a lot of styling changes will also get pasted which is not on the original webpage.</li>
+<li>As warned below, if you are using HTML Editors in software like Wordpress or similar, disable the plugin for that website to prevent styling changes from being entered in the HTML editor.</li>
+<li>ALSO IF YOU TAKE A PRINTOUT OF WEBPAGE changed by this extension, IT MAY NOT PRINT CORRECTLY. SO KEEP THE "Disable for this site" option ENABLED when PRINTING.</li>
+<li><b>DISABLE PLUGIN</b> = Select "Disable Better Text View for this site" or "Disable Better Text View on this site temporarily (keep settings)" option on Options menu or DISABLE "Activate on all websites" in All Settings page, whichever is preferred.</li>
 </ul>
 <h4>SUGGESTIONS OR ISSUES</h4>
 <ul>
@@ -139,6 +137,7 @@
 		<img src="assets/icons/options.png">
 		<ul>
 		<li><strong>Disable on this website:</strong> Adds the website to the blacklist.<strong>The contents of this site will not be changed.</strong><br>Default value: disabled</li>
+		<li><strong>Disable Better Text View on this site temporarily (keep settings):</strong> Adds the website to the blacklist but does not delete settings of site (which can be got back by disabling this).<strong>The contents of this site will not be changed but neither will customized settings be deleted.</strong><br>Default value: disabled</li>
 		<li><strong>Strength:</strong> Adjusts the application of black/white color. This value can be adjusted to preserve website's original colors or to make it higher contrast. In Dark mode or Reverse colors, this deteermines "brightness" of text / background. If it is an ODD number, INPUT text boxes color is changed to black/white for maximum contrast.<br>Default value: 0</li>
 		<li><strong>Increase font (%) / Threshold (px):</strong> Enlarges fonts that are below the threshold (in pixels).<br>Default value: 14% / 18 px.</li>
 		<li><strong>Font Weight</strong> Changes bold setting of fonts from 100 (thinnest) to 900 (boldest) 400 is normal.<br>Default value: 400</li>
@@ -166,6 +165,5 @@
 		<li><strong>All Settings</strong> Opens a tab with all the options, including the ability to activate the add-on everywhere, the global options (with in-depth tooltips), the whitelist/blacklist, and a link to this page.</li>
 		<li><strong>The calculated website background colors are used to determine if site has "Light" theme (lightness greater than 0.5) or "Dark theme" (lightness less than 0.5).<br>On some sites this calculation may result in wrong theme choice (light website calculated as "dark" theme or reverse).<br>If this happens, override this value by setting both "Dark mode" and "Reverse Colors" to enabled.( This only applies if you want to keep a "Dark" mode or "Reverse colors" on the site)</strong></li>
 		</ul>
-<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
 	</body>
 </html>

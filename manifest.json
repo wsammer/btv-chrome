@@ -1,12 +1,14 @@
 {
   "name": "Better Text View",
   "description": "Makes webpage text better for reading.",
-  "version": "3.8.3",
+  "version": "3.8.6",
   "author": "Sammer",
   "permissions": [
    "tabs",
-   "storage",
-   "<all_urls>"
+   "storage"
+  ],
+  "host_permissions": [
+   "*://*/*"
   ],
   "content_scripts": [{
     "js": [
