@@ -29,6 +29,7 @@ function init(tabs)
 
 	let WLcheck         = $("#addWL");
 	let BLcheck         = $("#addBL");
+	let BLchecktemp     = $("#addBLtemp");
 
 	let skipColoreds    = $("#skipColoreds");
 	let skipHeadings    = $("#skipHeadings");
@@ -75,17 +76,22 @@ function init(tabs)
 
 	url_text.innerText = hostname;
 
-	strSlider.oninput = () => { strLabel.innerText = strSlider.value; if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); } }
+	strSlider.oninput = () => {
+		strLabel.innerText = strSlider.value;
+		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2) } );
+		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
+	}
+
 	sizeSlider.oninput = () => { sizeLabel.innerText = sizeSlider.value; if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); } }
 	thresholdSlider.oninput = () => { thresholdLabel.innerText = thresholdSlider.value; if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); } }
-	brt_slider.oninput = () => { 
+	brt_slider.oninput = () => {
 		brt_label.innerText = (parseInt(brt_slider.value)+50);
-		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%' } );
+		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2) } );
 		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
 	}
 	con_slider.oninput = () => {
 		con_label.innerText = (parseInt(con_slider.value)+100);
-		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%' } );
+		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2) } );
 		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
 	}
 			
@@ -138,7 +144,14 @@ function init(tabs)
 		let item = settings;
 
 		if (blacklist.findIndex(o => o.url === hostname) > -1) {
-			BLcheck.checked = true;
+			let idx = whitelist.findIndex(o => o.url === hostname);
+			if (idx < 0) {
+				BLcheck.checked = true;
+				BLchecktemp.checked = false;
+			} else {
+				BLchecktemp.checked = true;
+				BLcheck.checked = false;
+			}
 		} else {
 			let idx = -1 ;
 			idx = whitelist.findIndex(o => o.url === '#preset'+ item.presetNumber);
@@ -307,6 +320,17 @@ function init(tabs)
 			}
 		};
 
+		BLchecktemp.onclick = () => {
+			let is_checked = BLchecktemp.checked;
+
+			blacklist = updateList({ url: hostname }, false, is_checked);
+
+			if (is_checked) {
+				BLcheck.checked = false;
+				WLcheck.checked = true;
+			}
+		};
+
 		BLcheck.onclick = () => {
 			let is_checked = BLcheck.checked;
 
@@ -338,6 +362,15 @@ function init(tabs)
 						BLcheck.checked = true;
 					}
 					BLcheck.onclick();
+					return;
+				}
+				if (checkbox.id === 'BLtemp') {
+					if (BLchecktemp.checked) {
+						BLchecktemp.checked = false;
+					} else {
+						BLchecktemp.checked = true;
+					}
+					BLchecktemp.onclick();
 					return;
 				}
 				if (checkbox.id  === 'skiplinks') {
@@ -403,7 +436,7 @@ function init(tabs)
 
 				whitelist = updateList(getOptions(), true, true);
 
-				if (BLcheck.checked)
+				if (BLcheck.checked || Blchecktemp.checked)
 					blacklist = updateList({ url: hostname }, false, false);
 			}
 		});

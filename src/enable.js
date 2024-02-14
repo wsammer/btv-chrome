@@ -1186,7 +1186,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindFg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1202,7 +1202,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindFg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1220,7 +1220,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindFg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1237,7 +1237,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindFg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1266,7 +1266,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindBg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1282,7 +1282,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindBg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1300,7 +1300,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindBg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1317,7 +1317,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindBg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1346,7 +1346,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindFg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1362,7 +1362,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindFg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1380,7 +1380,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindFg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1397,7 +1397,7 @@ async function start(cfg, url)
 					else
 						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
-					if (fgr1 != fgarr) {
+					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
 						fgr = colorblindFg(fgr1, cfg, false, false, 10);
 						fgr1 = getRGBarr(fgr);
@@ -1420,7 +1420,7 @@ async function start(cfg, url)
 			if (typeof m_sty[fgarr] == 'undefined') {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
-				if (fgr != fgarr) {
+				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
 				m_sty[fgr] = fgr;
 				}
@@ -1431,7 +1431,7 @@ async function start(cfg, url)
 			if (typeof m_sty[fgarr] == 'undefined') {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
-				if (fgr != fgarr) {
+				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
 				m_sty[fgr] = fgr;
 				}
@@ -1442,7 +1442,7 @@ async function start(cfg, url)
 			if (typeof m_sty[fgarr] == 'undefined') {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
-				if (fgr != fgarr) {
+				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
 				m_sty[fgr] = fgr;
 				}
@@ -1461,7 +1461,7 @@ async function start(cfg, url)
 			if (typeof m_sty[fgarr] == 'undefined') {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
-				if (fgr != fgarr) {
+				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
 				m_sty[fgr] = fgr;
 				}
@@ -1472,7 +1472,7 @@ async function start(cfg, url)
 			if (typeof m_sty[fgarr] == 'undefined') {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
-				if (fgr != fgarr) {
+				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
 				m_sty[fgr] = fgr;
 				}
@@ -1483,7 +1483,7 @@ async function start(cfg, url)
 			if (typeof m_sty[fgarr] == 'undefined') {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
-				if (fgr != fgarr) {
+				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
 				m_sty[fgr] = fgr;
 				}
@@ -1502,7 +1502,7 @@ async function start(cfg, url)
 			if (typeof m_sty[fgarr] == 'undefined') {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
-				if (fgr != fgarr) {
+				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
 				m_sty[fgr] = fgr;
 				}
@@ -1513,7 +1513,7 @@ async function start(cfg, url)
 			if (typeof m_sty[fgarr] == 'undefined') {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
-				if (fgr != fgarr) {
+				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
 				m_sty[fgr] = fgr;
 				}
@@ -1524,7 +1524,7 @@ async function start(cfg, url)
 			if (typeof m_sty[fgarr] == 'undefined') {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
-				if (fgr != fgarr) {
+				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
 				m_sty[fgr] = fgr;
 				}
@@ -1610,7 +1610,7 @@ async function start(cfg, url)
 		}
 	}
 	if (n_rulecount < 3) { console.log('Rule count cleared'); n_rulecount = 0; }
-			var zoom_mode = false, orig_val = [], t_zoom = 0, t_zc = 0, l_z = [];
+		var zoom_mode = false, orig_val = [], t_zoom = 0, t_zc = 0, l_z = [], orig_cursor = '';
 
 		if (cfg.forcePlhdr && cfg.forceIInv) {
 		let ms = null;
@@ -1639,6 +1639,7 @@ async function start(cfg, url)
 				if (e.keyCode == 16 && e.getModifierState("NumLock")) {
 					zoom_mode = false;
 					t_zc = Date.now();
+					document.documentElement.style.cursor = orig_cursor;
 				}
 			}
 
@@ -1646,6 +1647,13 @@ async function start(cfg, url)
 				if (e.keyCode == 16 && e.getModifierState("NumLock")) {
 					zoom_mode = true;
 					t_zc = Date.now();
+					if (!/zoom\-(in|out)/.test(document.documentElement.style.cursor)) {
+						orig_cursor = document.documentElement.style.cursor;
+						if (parseFloat(document.documentElement.style.getPropertyValue('g_zoom')) > 1.0)
+							document.documentElement.style.cursor = 'zoom-in';
+						else
+							document.documentElement.style.cursor = 'zoom-out';
+					}
 				}
 			}
 
@@ -1654,6 +1662,7 @@ async function start(cfg, url)
 				if (!zoom_mode) return;
 				if (zoom_mode && Date.now() - t_zc > 10000) {
 					zoom_mode = false;
+					document.documentElement.style.cursor = orig_cursor;
 					return;
 				}
 				let targ = getTarget(e);
@@ -1727,6 +1736,7 @@ async function start(cfg, url)
 					}
 				}
 				if (zoom_mode && Date.now() - t_zc > 10000) zoom_mode = false;
+				document.documentElement.style.cursor = orig_cursor;
 				}
 			}
 
@@ -2071,7 +2081,7 @@ async function start(cfg, url)
 							fgr = b_idone[fgarr];
 						else
 							fgr = m_sty[fgarr];
-						if (fgr != fgarr) {
+						if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2] || fgr[3] != fgarr[3]) {
 						node.style.setProperty('color','rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgarr[3]+')','important');
 						m_fcol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						m_sty[fgarr] = fgr;
@@ -2080,7 +2090,7 @@ async function start(cfg, url)
 					} else {
 					let fgr = applyColorMatrix([255-fgarr[0], 255-fgarr[1], 255-fgarr[2]]);
 					fgr[3] = fgarr[3];
-					if (fgr != fgarr) {
+					if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 					fgbrt = calcBrightness([fgr[0],fgr[1],fgr[2],fgarr[3]]);
 					if (fgbrt >= 0) {
 						m_fcol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
@@ -2100,7 +2110,7 @@ async function start(cfg, url)
 							fgr = b_idone[fgarr];
 						else
 							fgr = m_sty[fgarr];
-						if (fgr != fgarr) {
+						if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2] || fgr[3] != fgarr[3]) {
 						m_bocol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						m_sty[fgarr] = fgr;
 						m_sty[fgr] = fgr;
@@ -2108,15 +2118,15 @@ async function start(cfg, url)
 					} else {
 						fgr = applyColorMatrix([255-fgarr[0], 255-fgarr[1], 255-fgarr[2]]);
 						fgr[3] = fgarr[3];
-						if (fgr != fgarr) {
+						if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 						m_bocol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						m_sty[fgarr] = fgr;
 						m_sty[fgr] = fgr;
 						}
 					}
-					if (fgr != fgarr) {
+					if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2] || fgr[3] != fgarr[3]) {
 					bgbrt = calcBrightness([fgr[0],fgr[1],fgr[2],fgarr[3]]);
-					if (bgbrt > 0 && fgr != fgarr) {
+					if (bgbrt > 0 && (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2] || fgr[3] != fgarr[3])) {
 						m_bocol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						if (bog == cs.borderColor)
 							node.style.setProperty('border-color','rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgarr[3]+')','important');
@@ -2139,7 +2149,7 @@ async function start(cfg, url)
 							fgr = b_idone[fgarr];
 						else
 							fgr = m_sty[fgarr];
-						if (fgr != fgarr) {
+						if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2] || fgr[3] != fgarr[3]) {
 						node.style.setProperty('background-color','rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgarr[3]+')','important');
 						m_bcol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						m_sty[fgarr] = fgr;
@@ -2148,7 +2158,7 @@ async function start(cfg, url)
 					} else {
 					let fgr = applyColorMatrix([255-fgarr[0], 255-fgarr[1], 255-fgarr[2]]);
 					fgr[3] = fgarr[3];
-					if (fgr != fgarr) {
+					if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 					bgbrt = calcBrightness([fgr[0],fgr[1],fgr[2],fgarr[3]]);
 					if (bgbrt > 0) {
 						m_bcol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
@@ -2648,21 +2658,27 @@ var g_brt, g_ctr;
 
 function changeBrightnessContrast() {
 
-	chrome.storage.local.get(["abrightness","acontrast"]).then((res) => {
+	chrome.storage.local.get(["abrightness","acontrast","azoom"]).then((res) => {
 
 	let brt = document.documentElement.style.getPropertyValue("--g_brightness");
 	let ctr = document.documentElement.style.getPropertyValue("--g_contrast");
+	let zoo = document.documentElement.style.getPropertyValue("--g_zoom");
 
-	if (brt != res.abrightness || ctr != res.acontrast)
-	if (!isNaN(parseInt(res.abrightness)) && !isNaN(parseInt(res.acontrast))) {
+	if (brt != res.abrightness || ctr != res.acontrast || zoo != res.azoom)
+	if (!isNaN(parseInt(res.abrightness)) && !isNaN(parseInt(res.acontrast)) && !isNaN(parseInt(res.azoom))) {
 
 	g_brt = res.abrightness;
 	g_ctr = res.acontrast;
 
+	if (parseFloat(res.azoom) >= 0.0099)
+		document.documentElement.style.setProperty('--g_zoom',Math.abs(parseFloat(res.azoom)));
+	else
+		document.documentElement.style.setProperty('--g_zoom',1.75);
+
 	document.documentElement.style.setProperty('--g_brightness',g_brt);
 	document.documentElement.style.setProperty('--g_contrast', g_ctr);
 
-	chrome.storage.local.remove(["abrightness","acontrast"]);
+	chrome.storage.local.remove(["abrightness","acontrast","azoom"]);
 
 	let f_brt = parseInt(g_brt)/100;
 	let f_ctr = parseInt(g_ctr)/100;
