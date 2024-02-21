@@ -6,6 +6,8 @@
 
 body {
 	background:white;
+	--check_color : #06d;
+	--check_bg : #aaa;
 }
 
 .slider:focus {
@@ -26,6 +28,7 @@ body {
 @media (prefers-color-scheme: dark) {
 body {
 	background:#20272f!important;
+	--check_color: #0df;
 }
 label,h1,h2,h3,h4,li,p,b {
 	color: white!important;

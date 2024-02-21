@@ -17,11 +17,13 @@ body {
 .settings {
     display:flex;
     align-items:center;
+    cursor: pointer;
     justify-content:space-between;
 }
 
-.settings span:first-child {
+.settings label:first-child {
     width: 12em;
+    cursor: pointer;
 }
 
 .checkboxes{
@@ -174,7 +176,8 @@ input[type='checkbox'] {
 	cursor: pointer;
 	width: 30px;
 	height: 18px;
-	background: #000;
+	background-color: var(--check_bg);
+	color: var(--check_bg);
 	display: block;
 	border-radius: 18px;
 	position: relative;
@@ -187,30 +190,33 @@ input:checked ~ .checkmark:after {
 .checkmark:after {
 	content: '';
 	position: absolute;
-	top: 2px;
-	left: 3px;
-	width: 14px;
-	height: 14px;
-	background: #fff;
-	border-radius: 15px;
-	background-repeat: no-repeat;
-	background-size: 16px 16px;
-	background-position: -1px -1px;
+	top: 0px;
+	left: 0px;
+	width: 28px;
+	height: 16px;
+	background-color: var(--check_bg);
+	color: var(--check_bg);
+	border-radius: 16px;
+	border: 1px solid  #000;
 	background-image:url('../../assets/icons/circle.svg');
+	background-repeat: no-repeat;
+	background-position: 0px 0px;
+	background-size: 16px 16px;
 }
 input:checked ~ .checkmark:after {
 	position: absolute;
-	background-image:url('../../assets/icons/circle.svg');
+	background-image:url('../../assets/icons/circle2.svg');
 	background-repeat: no-repeat;
 	background-size: 16px 16px;
-	background-position: 9px -1px;
-	background-color: #0f0;
-	border-radius: 14px;
+	background-position: 12px 0px;
+	background-color: var(--check_color);
+	border-radius: 16px;
+	border: 1px solid  var(--check_color);
 	color: #000;
-	width: 24px;
-	height: 14px;
-	left: -7px;
-	top: 2px;
+	width: 28px;
+	height: 16px;
+	left: -10px;
+	top: 0px;
 }
 
 .settings
@@ -301,6 +307,22 @@ input:checked ~ .checkmark:after {
     border-bottom-color:#1E2021;
     left:10px;
     top:-12px;
+}
+
+
+@media (prefers-color-scheme: dark) {
+.checkmark:after {
+	border: 1px solid  #fff;
+}
+}
+
+@media (prefers-color-scheme: light) {
+.checkmark:after {
+	background-image:url('../../assets/icons/circle2.svg');
+}
+input:checked ~ .checkmark:after {
+	background-image:url('../../assets/icons/circle.svg');
+}
 }
 /* Prevents the tooltip from being hidden */
 /*
