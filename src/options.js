@@ -55,6 +55,8 @@ let BLtbody         = doc.querySelector("#BLtbody");
 let wl = [];
 let bl = [];
 
+let g_list = [];
+
 function addRow(item, is_wl)
 {
 	var table;
@@ -64,6 +66,8 @@ function addRow(item, is_wl)
 		list = wl;
 		list_name = 'whitelist';
 		table = WLtbody;
+		g_list = wl;
+		console.log('                len = '+wl.length);
 	} else {
 		list = bl;
 		list_name = 'blacklist';
@@ -397,10 +401,41 @@ function addListeners()
 
 	if (doc.getElementById("writew") !== null) {
 	doc.getElementById("writew").onclick = () => {
+		let w_item = {
+			url:            "#reset0p",
+			strength:       strSlider.value,
+			size:           sizeSlider.value,
+			threshold:      threshSlider.value,
+			weight:         weightSlider.value,
+			brightness:     brt_slider.value,
+			contrast:       con_slider.value,
+			skipHeadings:   skipHeadings.checked,
+			skipColoreds:   skipColoreds.checked,
+			advDimming:     advDimming.checked,
+			forcePlhdr:     forcePlhdr.checked,
+			forceIInv:      forceIInv.checked,
+			forceOpacity:   forceOpacity.checked,
+			normalInc:      normalInc.checked,
+			normalInc2:     normalInc2.checked,
+			ssrules:        ssrules.checked,
+			skipWhites:     skipWhites.checked,
+			makeCaps:       makeCaps.checked,
+			start3:         start3.checked,
+			skipLinks:      skipLinks.checked,
+			skipNavSection: skipNavSection.checked,
+			skipHeights:    skipHeights.checked,
+			underlineLinks: underlineLinks.checked,
+			input_border:   input_border.checked,
+			presetNumber:   0
+			};
+		let idx = wl.findIndex(o => o.url === "#reset0p");
+		if (idx > -1) wl.splice(idx);
+		wl.push(w_item);
+		chrome.storage.local.set({"whitelist": wl});
 		let link = doc.createElement("a");
 		let file = new Blob([JSON.stringify(wl)], { type: 'text/plain' });
 		link.href = URL.createObjectURL(file);
-		link.download = "whitelist.txt";
+		link.download = "whitelist.json";
 		link.click();
 		URL.revokeObjectURL(link.href);
 		link.remove();
@@ -412,21 +447,83 @@ function addListeners()
 		let fileSelector = doc.getElementById('fileselectorw');
 		fileSelector.addEventListener('change', (event) => { fileListw = event.target.files; });
 		let f = fileListw[0];
+		if (typeof fileListw[0] != 'undefined') {
 		var reader = new FileReader();
 		reader.onload = (function(theFile) {
 		return function(e) {
 		let JsonObj = JSON.parse(e.target.result);
-		var items
+		var items;
 		var item;
 		chrome.storage.local.set({'whitelist': JsonObj});
-		chrome.storage.local.get('whitelist', items);
+		chrome.storage.local.get('whitelist', items => {
 		let list = Array.from(items.whitelist);
-		for(const item of list)
+		for(item of list)
 			addRow(item, true);
+
+
+		let len = list.length;
+		let x = list.findIndex(o => o.url === '#reset0p');
+		if (x < len) {
+		var item = list[x];
+		strSlider.value          = item.strength;
+		strLabel.innerText       = item.strength;
+		strSlider.onchange();
+		sizeSlider.value         = item.size;
+		sizeLabel.innerText      = item.size;
+		sizeSlider.onchange();
+		threshSlider.value       = item.threshold;
+		threshLabel.innerText    = item.threshold;
+		threshSlider.onchange();
+		weightSlider.value       = item.weight;
+		weightLabel.innerText    = item.weight;
+		weightSlider.onchange();
+		brt_slider.value         = item.brightness;
+		brt_label.innerText      = (parseInt(item.brightness)+50);
+		brt_slider.onchange();
+		con_slider.value         = item.contrast;
+		con_label.innerText      = (parseInt(item.contrast)+100);
+		con_slider.onchange();
+		skipHeadings.checked     = item.skipHeadings;
+		skipHeadings.onclick();
+		skipColoreds.checked     = item.skipColoreds;
+		skipColoreds.onclick();
+		advDimming.checked       = item.advDimming;
+		advDimming.onclick();
+		input_border.checked     = item.input_border;
+		input_border.onclick();
+		forcePlhdr.checked       = item.forcePlhdr;
+		forcePlhdr.onclick();
+		forceIInv.checked        = item.forceIInv;
+		forceIInv.onclick();
+		forceOpacity.checked     = item.forceOpacity;
+		forceOpacity.onclick();
+		skipWhites.checked       = item.skipWhites;
+		skipWhites.onclick();
+		makeCaps.checked         = item.makeCaps;
+		makeCaps.onclick();
+		start3.checked           = item.start3;
+		start3.onclick();
+		skipLinks.checked        = item.skipLinks;
+		skipLinks.onclick();
+		normalInc.checked        = item.normalInc;
+		normalInc.onclick();
+		normalInc2.checked       = item.normalInc2;
+		normalInc2.onclick();
+		ssrules.checked          = item.ssrules;
+		ssrules.onclick();
+		skipNavSection.checked   = item.skipNavSection;
+		skipNavSection.onclick();
+		skipHeights.checked      = item.skipHeights;
+		skipHeights.onclick();
+		underlineLinks.checked   = item.underlineLinks;
+		underlineLinks.onclick();
+		}
+
+		});
 		};
 		})(f);
 		reader.readAsText(f);
-		location.reload();
+		}
 	};
 	}
   
@@ -435,7 +532,7 @@ function addListeners()
 		let link = doc.createElement("a");
 		let file = new Blob([JSON.stringify(bl)], { type: 'text/plain' });
 		link.href = URL.createObjectURL(file);
-		link.download = "blacklist.txt";
+		link.download = "blacklist.json";
 		link.click();
 		URL.revokeObjectURL(link.href);
 		link.remove();
@@ -446,6 +543,7 @@ function addListeners()
 	doc.getElementById("readb").onclick = () => {
 		let fileSelector = doc.getElementById('fileselectorb');
 		fileSelector.addEventListener('change', (event) => { fileListb = event.target.files; });
+		if (typeof fileListb[0] != 'undefined') {
 		let f = fileListb[0];
 		var reader = new FileReader();
 		reader.onload = (function(theFile) {
@@ -454,14 +552,16 @@ function addListeners()
 		var items;
 		var item;
 		chrome.storage.local.set({'blacklist': JsonObj});
-		chrome.storage.local.get('blacklist', items);
+		chrome.storage.local.get('blacklist', items => {
 		let list = Array.from(items.blacklist);
-		for(const item of list)
+		for(item of list)
 			addRow(item, false);
+		});
 		};
 		})(f);
 		reader.readAsText(f);
 		location.reload();
+		}
 	};
 	}
   
@@ -548,6 +648,7 @@ function saveURL(is_wl)
 		list = wl;
 		list_name = 'whitelist';
 		textarea = WLtextarea;
+		console.log('len = '+wl.length);
 	} else {
 		list = bl;
 		list_name = 'blacklist';

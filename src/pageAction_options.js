@@ -61,8 +61,10 @@ function init(tabs)
 	let hostname = '';
 
 	chrome.storage.local.get(["lightness", "default_size"]).then((result) => {
+		if (result.lightness && result.default_size) {
 			LightDark.innerText = 'Site lightness = '+result.lightness.toFixed(2);
 			LightDark.innerText += '\nBrowser font size = '+result.default_size;
+		}
 	});
 
 	if (url.startsWith('file://')) {
@@ -436,7 +438,7 @@ function init(tabs)
 
 				whitelist = updateList(getOptions(), true, true);
 
-				if (BLcheck.checked || Blchecktemp.checked)
+				if (BLcheck.checked || BLchecktemp.checked)
 					blacklist = updateList({ url: hostname }, false, false);
 			}
 		});

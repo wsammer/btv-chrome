@@ -17,18 +17,6 @@ function colorblindBg(col, cfg, nbinv, bfilter, n_inv) {
 			col[1] = blu;
 			pcol = 'rgba('+col[0]+', '+col[1]+', '+col[2]+', '+col[3]+')';
 		}
-	} else if (!cfg.forcePlhdr && cfg.advDimming && cmax != col[2]) {
-		if (col[0] >= col[1]) {
-			let blu = col[2];
-			col[2] = col[0];
-			col[0] = blu;
-			pcol = 'rgba('+col[0]+', '+col[1]+', '+col[2]+', '+col[3]+')';
-		} else if (col[1] > col[0]) {
-			let blu = col[2];
-			col[2] = col[1];
-			col[1] = blu;
-			pcol = 'rgba('+col[0]+', '+col[1]+', '+col[2]+', '+col[3]+')';
-		}
 	} else if (cfg.forcePlhdr && (nbinv|| bfilter) && cmax != col[2]) {
 		if (col[0] > col[1]) {
 			let blu = col[2];
@@ -41,7 +29,19 @@ function colorblindBg(col, cfg, nbinv, bfilter, n_inv) {
 			col[1] = blu;
 			pcol = 'rgba('+col[0]+', '+col[1]+', '+col[2]+', '+col[3]+')';
 		}
-	} else if (!cfg.forcePlhdr && cmax != col[2]) {
+	} else if (!cfg.forcePlhdr && cfg.advDimming && cmax != col[2]) {
+		if (col[0] >= col[1]) {
+			let blu = col[2];
+			col[2] = col[0];
+			col[0] = blu;
+			pcol = 'rgba('+col[0]+', '+col[1]+', '+col[2]+', '+col[3]+')';
+		} else if (col[1] > col[0]) {
+			let blu = col[2];
+			col[2] = col[1];
+			col[1] = blu;
+			pcol = 'rgba('+col[0]+', '+col[1]+', '+col[2]+', '+col[3]+')';
+		}
+	} else if (!cfg.forcePlhdr && !cfg.advDimming && cmax != col[2]) {
 		if (col[0] > col[1]) {
 			let blu = col[2];
 			col[2] = col[0];
@@ -109,7 +109,7 @@ function colorblindFg(col, cfg, nbinv, bfilter, n_inv) {
 			col[0] = blu;
 			pcol = 'rgba('+col[0]+', '+col[1]+', '+col[2]+', '+col[3]+')';
 		}
-	} else if (!cfg.forcePlhdr && cmax != col[2]) {
+	} else if (!cfg.forcePlhdr && !cfg.advDimming && cmax != col[2]) {
 		if (col[0] > col[1]) {
 			let blu = col[2];
 			col[2] = col[0];
@@ -2662,10 +2662,10 @@ function changeBrightnessContrast() {
 
 	let brt = document.documentElement.style.getPropertyValue("--g_brightness");
 	let ctr = document.documentElement.style.getPropertyValue("--g_contrast");
-	let zoo = document.documentElement.style.getPropertyValue("--g_zoom");
+	let zoo = parseFloat(document.documentElement.style.getPropertyValue("--g_zoom"));
 
-	if (brt != res.abrightness || ctr != res.acontrast || zoo != res.azoom)
-	if (!isNaN(parseInt(res.abrightness)) && !isNaN(parseInt(res.acontrast)) && !isNaN(parseInt(res.azoom))) {
+	if (brt != res.abrightness || ctr != res.acontrast || zoo != parseFloat(res.azoom))
+	if (!isNaN(parseInt(res.abrightness)) && !isNaN(parseInt(res.acontrast)) && !isNaN(parseFloat(res.azoom))) {
 
 	g_brt = res.abrightness;
 	g_ctr = res.acontrast;
