@@ -783,6 +783,7 @@ function getCSS(cfg) {
 
 	let boldw = cfg.weight;
 	let bold = '';
+	if (!(cfg.skipLinks && !cfg.start3))
 	if (!cfg.start3 || boldw < 400)
 	if (boldw != 400)
 		bold = `*{font-weight:${boldw}!important};`;
@@ -823,6 +824,10 @@ function getCSS(cfg) {
 		g_m = multiplyMatrices(g_m2, Matrix.invertNHue());
 	}
 
+	let fntFmly = '';
+	if (cfg.fontFamily)
+		fntFmly = `*{font-family:'${cfg.fontFamilyName}'!important;}`;
+
 	let cust = '';
 	if (cfg.customCss)
 		cust = cfg.customCssText;
@@ -845,8 +850,14 @@ function getCSS(cfg) {
 	if (cfg.size > 0 && cfg.threshold > 0) {
 		while (c < cfg.threshold) {
 			++c;
-			cc = (cfg.size*0.2) + parseFloat(cfg.threshold*1.075) - (2*c/11);
-			pcent = Math.abs((2.5*cfg.size) - (c*20/cfg.threshold));
+			if (!cfg.start3 && cfg.skipLinks)
+				cc = (cfg.size*0.2) + (parseFloat(cfg.threshold*1.075) - (2*c/11))*(100+((cfg.weight+400) % 900))/900;
+			else
+				cc = (cfg.size*0.2) + parseFloat(cfg.threshold*1.075) - (2*c/11);
+			if (!cfg.start3 && cfg.skipLinks)
+				pcent = Math.abs((2.5*cfg.size) - (c*20/cfg.threshold))*(100+((cfg.weight+400) % 900))/900;
+			else
+				pcent = Math.abs((2.5*cfg.size) - (c*20/cfg.threshold));
 			if (parseFloat(cc) < c) { cc = c; }
 			if (parseFloat(cc) > cfg.threshold) cc = cfg.threshold;
 			let cc1 = parseInt(cc);
@@ -872,7 +883,7 @@ function getCSS(cfg) {
 	str_style = `brightness(${brght}) contrast(${ctrst})`;
 	str_style2 = '1';
 
-	return `${bold}${size_inc}${g_mag}${form_border}${underline}${cust}`;
+	return `${bold}${size_inc}${g_mag}${form_border}${underline}${fntFmly}${cust}`;
 }
 
 function createElem()
@@ -928,6 +939,8 @@ async function init()
 		'skipHeights',
 		'underlineLinks',
 		'input_border',
+		'fontFamily',
+		'fontFamilyName',
 		'customCss',
 		'customCssText'
 	];
@@ -1066,7 +1079,7 @@ async function start(cfg, url)
 			cfg.forcePlhdr = true;
 			cfg.advDimming = false;
 			var cs = css_node.nodeValue;
-			var rcs = cs.replaceAll(/filter\W*brightness[\W\d]*contrast[\W\d]*important\;/mg,'');
+			var rcs = cs.replaceAll(/filter.*?brightness.*?contrast.*?important\;/mg,'');
 			css_node.nodeValue = rcs;
 		} else {
 			if (cfg.advDimming) {
@@ -1088,7 +1101,7 @@ async function start(cfg, url)
 			cfg.forcePlhdr = true;
 			cfg.advDimming = false;
 			var cs = css_node.nodeValue;
-			var rcs = cs.replaceAll(/filter\W*brightness[\W\d]*contrast[\W\d]*important\;/mg,'');
+			var rcs = cs.replaceAll(/filter.*?brightness.*?contrast.*?important\;/mg,'');
 			css_node.nodeValue = rcs;
 		}
 	}
