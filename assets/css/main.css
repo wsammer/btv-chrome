@@ -25,6 +25,12 @@ body {
 	cursor: pointer;
 }
 
+textarea,
+input[type="text"] {
+	color: black;
+	background-color: white;	
+}
+
 @media (prefers-color-scheme: dark) {
 body {
 	background:#20272f!important;
@@ -39,7 +45,8 @@ span {
 .container input:checked ~ .checkmark {
 	background-color: #0077ff!important;
 }
-textarea {
+textarea,
+input[type="text"] {
 	color: white!important;
 	background-color: black!important;	
 }
