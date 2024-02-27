@@ -42,6 +42,8 @@ function init(tabs)
 	let makeCaps        = $("#makeCaps");
 	let start3          = $("#start3");
 	let skipLinks       = $("#skipLinks");
+	let fontFamily      = $("#fontFamily");
+	let fontFamilyName  = $("#fontFamilyName");
 	let customCss       = $("#customCss");
 	let customCssText   = $("#customCssText");
 	let normalInc       = $("#normalInc");
@@ -51,6 +53,7 @@ function init(tabs)
 	let skipHeights     = $("#skipHeights");
 
 	let optionsBtn      = $("#optionsBtn");
+	let fontBtn         = $("#fontBtn");
 	let LightDark       = $("#LightDark");
 	let presetSel       = $("#presetSelect");
 	let presetSave      = $("#presetSave");
@@ -80,7 +83,7 @@ function init(tabs)
 
 	strSlider.oninput = () => {
 		strLabel.innerText = strSlider.value;
-		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2) } );
+		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2), afont: fontFamilyName.value } );
 		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
 	}
 
@@ -88,17 +91,18 @@ function init(tabs)
 	thresholdSlider.oninput = () => { thresholdLabel.innerText = thresholdSlider.value; if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); } }
 	brt_slider.oninput = () => {
 		brt_label.innerText = (parseInt(brt_slider.value)+50);
-		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2) } );
+		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2), afont: fontFamilyName.value } );
 		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
 	}
 	con_slider.oninput = () => {
 		con_label.innerText = (parseInt(con_slider.value)+100);
-		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2) } );
+		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2), afont: fontFamilyName.value } );
 		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
 	}
 			
 	weight_slider.oninput = () => { weight_label.innerText = weight_slider.value; if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); } }
 	customCssText.oninput = () => { if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); } }
+	fontFamilyName.oninput = () => { if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); } }
 
 	optionsBtn.onclick = () =>  {
 		if (chrome.runtime.openOptionsPage)
@@ -107,6 +111,21 @@ function init(tabs)
 			window.open(chrome.runtime.getURL('options.html'));
 	};
 
+	fontFamily.onchange = () =>  {
+		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value)/100).toFixed(2), afont: fontFamilyName.value } );
+		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
+	}
+	fontBtn.onclick = () =>  {
+		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value)/100).toFixed(2), afont: fontFamilyName.value } );
+		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
+	}
+	fontFamilyName.onkeydown = (e) => {
+		if (e.keyCode == 13) {
+			chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value)/100).toFixed(2), afont: fontFamilyName.value } );
+			if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
+		}
+	}
+
 	let settings = [
 		"whitelist",
 		"blacklist",
@@ -114,6 +133,7 @@ function init(tabs)
 		"size",
 		"sizeThreshold",
 		"weight",
+		"strength",
 		"skipColoreds",
 		"skipHeadings",
 		"advDimming",
@@ -133,6 +153,8 @@ function init(tabs)
 		"skipHeights",
 		"underlineLinks",
 		"input_border",
+		"fontFamily",
+		"fontFamilyName",
 		"customCss",
 		"customCssText",
 		"presetNumber"
@@ -200,6 +222,8 @@ function init(tabs)
 		skipNavSection.checked   = item.skipNavSection;
 		skipHeights.checked      = item.skipHeights;
 		underlineLinks.checked   = item.underlineLinks;
+		fontFamily.checked       = item.fontFamily;
+		fontFamilyName.value     = item.fontFamilyName || '';
 		customCss.checked        = item.customCss;
 		customCssText.value      = item.customCssText || '';
 		
@@ -220,6 +244,12 @@ function init(tabs)
 		} else {
 			$('#custom-text-div').style.display = 'block';
 			$('#customCssText').value = customCssText.value;
+		}
+		if (!fontFamily.checked) {
+			$('#font-div').style.display = 'none';
+		} else {
+			$('#font-div').style.display = 'flex';
+			$('#fontFamilyName').value = fontFamilyName.value;
 		}
 
 		let getOptions = () => {
@@ -248,6 +278,8 @@ function init(tabs)
 				skipHeights:    skipHeights.checked,
 				underlineLinks: underlineLinks.checked,
 				input_border:   input_border.checked,
+				fontFamily:     fontFamily.checked,
+				fontFamilyName: fontFamilyName.value,
 				customCss:      customCss.checked,
 				customCssText:  customCssText.value,
 				presetNumber:	presetSel.value
@@ -298,12 +330,38 @@ function init(tabs)
 			skipNavSection.checked   = item.skipNavSection;
 			skipHeights.checked      = item.skipHeights;
 			underlineLinks.checked   = item.underlineLinks;
+			fontFamily.checked       = item.fontFamily;
+			fontFamilyName.value     = item.fontFamilyName;
 			customCss.checked        = item.customCss;
 			customCssText.value      = item.customCssText || '';
 
 			WLcheck.checked = true;	
 			WLcheck.click();
 
+			if(!advDimming.checked && !forcePlhdr.checked) {
+				$('#brt-div').style.display ='none';
+				$('#con-div').style.display ='none';
+			}
+			if (!forcePlhdr.checked) {
+				$('#iinv-div').style.display = 'none';
+				$('#norm-div').style.display = 'none';
+			}
+			if (!start3.checked)
+				$('#skiplinks-div').style.display = 'none';
+			else
+				$('#skiplinks-div').style.display = 'block';
+			if (!customCss.checked) {
+				$('#custom-text-div').style.display = 'none';
+			} else {
+				$('#custom-text-div').style.display = 'block';
+				$('#customCssText').value = customCssText.value;
+			}
+			if (!fontFamily.checked) {
+				$('#font-div').style.display = 'none';
+			} else {
+				$('#font-div').style.display = 'flex';
+				$('#fontFamilyName').value = fontFamilyName.value;
+			}
 			showRefreshBtn();
 			return;
 			}
@@ -433,6 +491,16 @@ function init(tabs)
 					} else {
 						brt_div.style.display = 'none';
 						con_div.style.display = 'none';
+					}
+				}
+
+				if (checkbox.id === 'font-family') {
+					const font_div = document.querySelector('#font-div');
+					if (fontFamily.checked) {
+						font_div.style.display = 'flex';
+						$('#fontFamilyName').value = fontFamilyName.value;
+					} else {
+						font_div.style.display = 'none';
 					}
 				}
 
