@@ -296,6 +296,7 @@ let m_fcol = new Map();
 let m_bcol = new Map();
 let m_bocol = new Map();
 let g_mag = '';
+let g_fntRule = false;
 
 const focalAnchors = {};
 focalAnchors.attrNameContainer = 'f-a-h';
@@ -824,9 +825,22 @@ function getCSS(cfg) {
 		g_m = multiplyMatrices(g_m2, Matrix.invertNHue());
 	}
 
-	let fntFmly = '';
-	if (cfg.fontFamily)
-		fntFmly = `*{font-family:'${cfg.fontFamilyName}'!important;}`;
+	let fntFmly = `*{font-family:var(--g_btvfont)!important;}`;
+	if (cfg.fontFamily) {
+		document.documentElement.style.setProperty('--g_btvfont',cfg.fontFamilyName);
+		g_fntRule = true;
+	} else {
+		fntFmly = '';
+		document.documentElement.style.setProperty('--g_btvfont','');
+		g_fntRule = false;
+		let rul = 'var(--g_btvfont)';
+		let rl = style_node.sheet.cssRules;
+		let x = 0;
+		for (x = 0; x < rl.length; x++ )
+			if (rl[x].cssText.indexOf(rul) > -1) break;
+		if (x < rl.length)
+			style_node.sheet.deleteRule(x);
+	}
 
 	let cust = '';
 	if (cfg.customCss)
@@ -1002,6 +1016,7 @@ async function start(cfg, url)
 		'AUDIO',
 		'SVG',
 		'IMG',
+		'PICTURE',
 		'EMBED',
 		'OBJECT',
 		'SOURCE',
@@ -2671,14 +2686,15 @@ var g_brt, g_ctr;
 
 function changeBrightnessContrast() {
 
-	chrome.storage.local.get(["abrightness","acontrast","azoom"]).then((res) => {
+	chrome.storage.local.get(["abrightness","acontrast","azoom","afont"]).then((res) => {
 
 	let brt = document.documentElement.style.getPropertyValue("--g_brightness");
 	let ctr = document.documentElement.style.getPropertyValue("--g_contrast");
 	let zoo = parseFloat(document.documentElement.style.getPropertyValue("--g_zoom"));
+	let fnt = document.documentElement.style.getPropertyValue("--g_btvfont");
 
-	if (brt != res.abrightness || ctr != res.acontrast || zoo != parseFloat(res.azoom))
-	if (!isNaN(parseInt(res.abrightness)) && !isNaN(parseInt(res.acontrast)) && !isNaN(parseFloat(res.azoom))) {
+	if (brt != res.abrightness || ctr != res.acontrast || zoo != parseFloat(res.azoom) || fnt != res.afont)
+	if ((!isNaN(parseInt(res.abrightness)) && !isNaN(parseInt(res.acontrast)) && !isNaN(parseFloat(res.azoom))) || res.afont) {
 
 	g_brt = res.abrightness;
 	g_ctr = res.acontrast;
@@ -2688,10 +2704,29 @@ function changeBrightnessContrast() {
 	else
 		document.documentElement.style.setProperty('--g_zoom',1.75);
 
+	if (res.afont.length > 0) {
+		document.documentElement.style.setProperty('--g_btvfont',res.afont);
+		let rul = `*{font-family:var(--g_btvfont)!important;}`;
+		if (!g_fntRule) {
+			style_node.sheet.insertRule(rul,0);
+			g_fntRule = true;
+		}
+	} else if (g_fntRule) {
+		document.documentElement.style.setProperty('--g_btvfont','');
+		g_fntRule = false;
+		let rul = 'var(--g_btvfont)';
+		let rl = style_node.sheet.cssRules;
+		let x = 0;
+		for (x = 0; x < rl.length; x++ )
+			if (rl[x].cssText.indexOf(rul) > -1) break;
+		if (x < rl.length)
+			style_node.sheet.deleteRule(x);
+	}
+
 	document.documentElement.style.setProperty('--g_brightness',g_brt);
 	document.documentElement.style.setProperty('--g_contrast', g_ctr);
 
-	chrome.storage.local.remove(["abrightness","acontrast","azoom"]);
+	chrome.storage.local.remove(["abrightness","acontrast","azoom","afont"]);
 
 	let f_brt = parseInt(g_brt)/100;
 	let f_ctr = parseInt(g_ctr)/100;
