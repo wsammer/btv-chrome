@@ -8,19 +8,21 @@
 	</head>
 	<body>  
 		<div id ="wrapper">
-			<div class ="option" id="BL">
-				<label for ="addBL">Disable Better Text View on this site</label>
-				<label class="container">
-					<input type="checkbox" id="addBL">
-					<span class="checkmark"></span>
-				</label>
-			</div>
-			<div class ="option" id="BLtemp">
-				<label for ="addBLtemp">Disable Better Text View on this site temporarily (keep settings)</label>
-				<label class="container">
-					<input type="checkbox" id="addBLtemp">
-					<span class="checkmark"></span>
-				</label>
+			<div style="display:inline;">
+				<div  style="float:left;width:48%;margin:0;" class ="option" id="BL">
+					<label for ="addBL">Disable (blacklist) on this site</label>
+					<label class="container">
+						<input type="checkbox" id="addBL">
+						<span class="checkmark"></span>
+					</label>
+				</div>
+				<div style="float:right;width:49%;margin:0;" class ="option" id="BLtemp">
+					<label for ="addBLtemp">Disable temporarily, keep settings</label>
+					<label class="container">
+						<input type="checkbox" id="addBLtemp">
+						<span class="checkmark"></span>
+					</label>
+				</div>
 			</div>
 			<div class ="sliders">
 				<div class = "sliderDiv">
@@ -114,6 +116,13 @@
 							<span class="checkmark"></span>
 						</label>
 					</div>
+					<div class ="option" id="font-family">
+						<label for="fontFamily">Font name: </label>
+						<label class="container">
+							<input type="checkbox" id="fontFamily">
+							<span class="checkmark"></span>
+						</label>
+					</div>
 				</div>
 				<div class ="separator" id ="sep">
 					<div class ="option">
@@ -136,6 +145,10 @@
 							<input type="checkbox" id="normalInc">
 							<span class="checkmark"></span>
 						</label>
+					</div>
+					<div class ="option" id="font-div">
+					<input type="text" id="fontFamilyName" placeholder="Sans, Serif, Monospace" style="display:block;width:auto;height:16px;font-size:14px;line-height:15px;margin:0;"></input>&nbsp;&nbsp;
+					<button type="button" style="height:23px;font-size:14px;margin:0;padding:0 2px 0 2px;" id="fontBtn">Apply</button>
 					</div>
 				</div>
 				<div class ="separator">
