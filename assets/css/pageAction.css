@@ -46,7 +46,8 @@ body
     width: 380px;
     border-radius: 5px;
     height: 0.9em;
-    margin-bottom: -3px;
+    position: relative;
+    top: -4px;
 }
 
 .slider:focus {
@@ -228,7 +229,7 @@ input:checked ~ .checkmark:after {
 	height: 16px;
 	background-color: var(--check_bg);
 	color: var(--check_bg);
-	border-radius: 16px;
+	border-radius: 17px;
 	border: 1px solid  #000;
 	background-image:url('../../assets/icons/circle.svg');
 	background-repeat: no-repeat;
@@ -242,7 +243,7 @@ input:checked ~ .checkmark:after {
 	background-size: 16px 16px;
 	background-position: 12px 0px;
 	background-color: var(--check_color);
-	border-radius: 16px;
+	border-radius: 17px;
 	border: 1px solid  var(--check_color);
 	color: #000;
 	width: 28px;
