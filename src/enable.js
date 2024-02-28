@@ -1192,7 +1192,7 @@ async function start(cfg, url)
 		let value = rule.style.cssText;
 		if (typeof m_done[key] == 'undefined') m_done[key] = 0;
 		if ((cfg.forcePlhdr && cfg.normalInc) || cfg.advDimming)
-		if (m_done[key] < 3 && (rule.style.color || rule.style.backgroundColor || rule.style.borderColor)) {
+		if (m_done[key] < 3 && (rule.style.color || rule.style.backgroundColor || rule.style.borderColor || rule.style.backgroundImage)) {
 			m_done[key]++;
 			if (/\:(before|after)/i.test(key)) {
 				if (rule.style.color && rule.style.color.indexOf('calc\(') < 0) {
@@ -1434,6 +1434,11 @@ async function start(cfg, url)
 					rule.style.setProperty('border-color',fgr,'important');
 					}
 					}
+				}
+				if (rule.style.backgroundImage) {
+					let a = rule.style.getPropertyValue('background-image');
+					if (!/gradient/i.test(rule.style.backgroundImage))
+						rule.style.setProperty('filter','invert(1)','important');
 				}
 			} else {
 			if (rule.style.color && rule.style.color.indexOf('calc\(') < 0) {
