@@ -53,7 +53,9 @@
 		</p>
 <h4>NEW CHANGES</h4>
 <ul>
-<li>"Secret" setting (enable "Skip links" and disable "Start 3 letters") makes the Font Weight slider proportional to inverse text size calculations. 400 weight is default "inverted text size change" whose amount decreases at font weight of 300 .. 100 .. 900 .. 500 with 500 being "normal" website text with no "inverse text size change". If a site has VERY bad layout due to inverted text sizing, decrease the font weight to 100 / 900 .. 500 which will keep original font size settings. The setting is enabled by making "skip links in start 3" enabled and "start 3 letters bold"disable.</li>
+<li>Bugfix for exporting of whitelist did not store all items in list.</li>
+<li>New option in Reverse colors for processing Before / After pseudo elements' background images which are then correctly displayed.</li>
+<li>Setting (enable "Skip links" and disable "Start 3 letters") makes the Font Weight slider proportional to inverse text size calculations. 400 weight is default "inverted text size change" whose amount decreases at font weight of 300 .. 100 .. 900 .. 500 with 500 being "normal" website text with no "inverse text size change". If a site has VERY bad layout due to inverted text sizing, decrease the font weight to 100 / 900 .. 500 which will keep original font size settings. The setting is enabled by making "skip links in start 3" enabled and "start 3 letters bold"disable.</li>
 <li>New "Font name" setting makes all text of font type as specified in setting. For example, enter 'Sans-Serif' / 'Serif' / 'monospace' (no quotes) in "Font name" text box and refresh page to get all text of that font type (or name).</li>
 <li>Global settings are saved when exporting a whitelist to a file.</li>
 <li>New option to Disable Better Text View on a site temporarily while keeping settings instead of deleting them (which Blacklist does).</li>
@@ -107,6 +109,7 @@
 <li>A "Force Reverse Colors" option allows site to "Reverse" colors, so that a light site becomes black. It is useful for changing colors of sites to "Dark Theme" or "Dark Reader" view while preserving (most of) images' colors. In case a webpage does not have its background color reversed, enabling "Force max opacity" will force a reversal of the background color (but only if "High contrast dark mode" is disabled).</li>
 <li>The "Invert Image Colors" option, which appears when "Force Reverse Colors" is enabled, causes images and videos colors to be inverted, so due to double inversion images and videos become normal. If it is disabled, the images and videos are not doubly inverted in color, causing them to look "reverse color".</li>
 <li>Reverse color hue correction changes colors to match original website in reverse colors..</li>
+<li>Option "Process :before/:after elements" in Reverse colors for processing Before / After pseudo elements' background images which are then correctly displayed (but only if "Invert image colors" is enabled). If any images in reverse colors are displayed in reverse colors, try enabling this option, with "Invert image colors" also enabled.</li>
 <li>The text brightness and contrast can be changed by the sliders when "Reverse colors" is enabled. To revert to original brightness and contrast, set Strength to 0 and Contrast to 50.</li>
 <li>The popup options box show the "Lightness" value of current site. If less than 0.5, then it is considered "Dark themed", if more than 0.5, it is "Light themed". Dark themed site colors can be changed by "Dark mode" while "Light themed" site colors can be changed through "Reverse Colors". Some few sites may detect theme wrong, then enable BOTH Dark mode and Reverse colors to force site color changes.</li>
 <li>If "High contrast Dark mode" is enabled in Dark mode, then brightness and contrast are applied to more elements and images (which can distort colors of some images). Newer method of calculating black / white / high contrast text color is used. When disabled with "Force max opacity" enabled background color of HTML BODY is reversed.</li>
@@ -115,13 +118,13 @@
 <li>'Colorblind adjust colors' when enabled changes text colors and background to suit colorblind condition. In dark mode or reverse colors, the text hue is changed toward green color while in normal light theme, the text is changed for blue color.</li>
 <li>Enabling "Apply custom CSS for site" will allow you to enter custom CSS rules for the site</li>
 <li>The "Disable Better Text View on this site temporarily (keep settings)" option keeps settings saved while blacklisting (making no changes) the site. If the settings on a site need to be temporarily disabled, use this option insted of "Disable Better Text View on this site".</li>
-<li>"Font name" option allows changing font of all text of page with the font entered in textbox. After putting font name in textbox, press Enter or click "Apply" and the font will change immediately without requiring refresh of page.</li>
+<li>"Font name" option allows changing font of all text of page with the font entered in textbox. After putting font name in textbox, press Enter and the font will change immediately without requiring refresh of page.</li>
 <li>The "inverse text size" increase can be reduced to "normal size" by changing font weight after the setting "skip links" enabled and "start 3 bold" disabled.</li>
 <li>Additional features are input box borders, underlining of links, forcing maximum opacity of transparent elements and saving/loading of settings whitelists/blacklists,</li>
 <li>This extension is helpful for people who require reading glasses / spectacles due to far-sight / long-sight / hypermetropia / hyperopia condition of eyes.<b>HOWEVER IT IS NOT A SUBSTITUTE FOR READING GLASSES / OPTICAL LENSES.</b></li>
 <li><b>VERY IMPORTANT WARNING</b>: If you are COPY+PASTE-ing from a page which has been changed by this plugin, DISABLE the plugin for that webpage and THEN copy + paste. If you are editing or submitting HTML content online using a content management system like Wordpress or having an HTML Editor, DISABLE this extension for that particular site. Otherwise, the HTML will contain unwanted styling elements generated by the extension.</li>
 <li>WHEM PRINTING A WEBPAGE modified by this extension, KEEP "Disable for this site (keep settings)" enabled otherwise the PRINTING WON'T BE CORRECT.</li>
-<li><b><em>SPEED of page processing is SLOW. There are some options to increase speed of font changes / colors and enabling / disabling any or all of - "Skip text height change" / "Skip NAV SECTION" / "Avoid colorful text" / "Reverse colors hue correction" -  can run little faster.</em></b></li>
+<li><b><em>SPEED of page processing is SLOW. There are some options to increase speed of font changes / colors and enabling / disabling any or all of - "Skip text height change" / "Skip NAV SECTION" / "Avoid colorful text" / "Reverse colors hue correction" / "Process :before/:after elements" -  can run little faster.</em></b></li>
 </ul>
 <h4>CAUTION AND WARNING</h4>
 <ul>
@@ -153,6 +156,7 @@
 		<li><strong>Force Reverse Color:</strong> Reverses colors of a site, so a light background site becomes black and black background site becomes bright, Text colors are also reversed. Images are unchanged as much as possible.<br>Default value: disabled</li>
 		<li><strong>Invert Image colors:</strong> Does not apply reverse colors to images, causing images to appear in reverse colors.<br>Default value: enabled</li>
 		<li><strong>Reverse colors hue correction:</strong> Changes text colors to match those of website.<br> It is enabled when Reverse colors gets enabled. Default value: enabled</li>
+		<li><strong>Process :before/:after elements</strong> Makes background images in :before/:after elements have normal colors (if "Invert image colors" is enabled.<br> It is visible when Reverse colors gets enabled, but kept disabled due to slow speed. Default value: disabled</li>
 		<li><strong>Input border:</strong> Attempts to add a black outline around text areas.<br>Default value: disabled</li>
 		<li><strong>Force max opacity:</strong> Forces full opacity on all fonts.<strong> Also changes background color if "Force Reverse Colors" is enabled and "High contrast dark mode" is disabled.</strong><br>Default value: disabled</li>
 		<li><strong>Skip headings:</strong> Avoids applying on head tags H1 to H4.<br>Default value: disabled</li>
