@@ -25,6 +25,7 @@ let globalEnabled   = doc.querySelector('#defaultEn');
 let advDimming      = doc.querySelector('#advDimming');
 let forcePlhdr      = doc.querySelector('#forcePlhdr');
 let forceIInv       = doc.querySelector('#forceIInv');
+let pseudoAB        = doc.querySelector('#pseudoAB');
 let forceOpacity    = doc.querySelector('#forceOpacity');
 let skipWhites      = doc.querySelector('#skipWhites');
 let makeCaps        = doc.querySelector('#makeCaps');
@@ -190,6 +191,7 @@ function init()
 		"ssrules",
 		"forcePlhdr",
 		"forceIInv",
+		"pseudoAB",
 		"skipWhites",
 		"makeCaps",
 		"start3",
@@ -215,6 +217,8 @@ function init()
 			doc.getElementById("forcePlhdr").checked     = i.forcePlhdr;
 		if (doc.getElementById("forceIInv") != null)
 			doc.getElementById("forceIInv").checked      = i.forceIInv;
+		if (doc.getElementById("pseudoAB") != null)
+			doc.getElementById("pseudoAB").checked       = i.pseudoAB;
 		if (doc.getElementById("skipWhites") != null)
 			doc.getElementById("skipWhites").checked     = i.skipWhites;
 		if (doc.getElementById("normalInc") != null)
@@ -317,6 +321,12 @@ function addListeners()
 	};
 	}
 
+	if (pseudoAB !== null) {
+	pseudoAB.onclick = () => {
+		chrome.storage.local.set({'pseudoAB': isChecked("pseudoAB")});
+	};
+	}
+
 	if (forceOpacity !== null) {
 	forceOpacity.onclick = () => {
 		chrome.storage.local.set({'forceOpacity': isChecked("forceOpacity")});
@@ -414,6 +424,7 @@ function addListeners()
 			advDimming:     advDimming.checked,
 			forcePlhdr:     forcePlhdr.checked,
 			forceIInv:      forceIInv.checked,
+			pseudoAB:	pseudoAB.checked,
 			forceOpacity:   forceOpacity.checked,
 			normalInc:      normalInc.checked,
 			normalInc2:     normalInc2.checked,
@@ -429,8 +440,7 @@ function addListeners()
 			presetNumber:   0
 			};
 		let idx = wl.findIndex(o => o.url === "#reset0p");
-		if (idx > -1) wl.splice(idx);
-		wl.push(w_item);
+		if (idx > -1) wl.splice(idx,1,w_item);
 		chrome.storage.local.set({"whitelist": wl});
 		let link = doc.createElement("a");
 		let file = new Blob([JSON.stringify(wl)], { type: 'text/plain' });
@@ -495,6 +505,8 @@ function addListeners()
 		forcePlhdr.onclick();
 		forceIInv.checked        = item.forceIInv;
 		forceIInv.onclick();
+		pseudoAB.checked         = item.pseudoAB;
+		pseudoAB.onclick();
 		forceOpacity.checked     = item.forceOpacity;
 		forceOpacity.onclick();
 		skipWhites.checked       = item.skipWhites;

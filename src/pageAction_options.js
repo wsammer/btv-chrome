@@ -37,6 +37,7 @@ function init(tabs)
 	let input_border    = $("#outline");
 	let forcePlhdr      = $("#forcePlhdr");
 	let forceIInv       = $("#forceIInv");
+	let pseudoAB        = $("#pseudoAB");
 	let forceOpacity    = $("#forceOpacity");
 	let skipWhites      = $("#skipWhites");
 	let makeCaps        = $("#makeCaps");
@@ -53,7 +54,6 @@ function init(tabs)
 	let skipHeights     = $("#skipHeights");
 
 	let optionsBtn      = $("#optionsBtn");
-	let fontBtn         = $("#fontBtn");
 	let LightDark       = $("#LightDark");
 	let presetSel       = $("#presetSelect");
 	let presetSave      = $("#presetSave");
@@ -115,10 +115,6 @@ function init(tabs)
 		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value)/100).toFixed(2), afont: fontFamilyName.value } );
 		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
 	}
-	fontBtn.onclick = () =>  {
-		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value)/100).toFixed(2), afont: fontFamilyName.value } );
-		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
-	}
 	fontFamilyName.onkeydown = (e) => {
 		if (e.keyCode == 13) {
 			chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value)/100).toFixed(2), afont: fontFamilyName.value } );
@@ -141,6 +137,7 @@ function init(tabs)
 		"contrast",
 		"forcePlhdr",
 		"forceIInv",
+		"pseudoAB",
 		"forceOpacity",
 		"normalInc",
 		"normalInc2",
@@ -211,6 +208,7 @@ function init(tabs)
 		input_border.checked     = item.input_border;
 		forcePlhdr.checked       = item.forcePlhdr;
 		forceIInv.checked        = item.forceIInv;
+		pseudoAB.checked         = item.pseudoAB;
 		forceOpacity.checked     = item.forceOpacity;
 		skipWhites.checked       = item.skipWhites;
 		makeCaps.checked         = item.makeCaps;
@@ -234,6 +232,7 @@ function init(tabs)
 		if (!forcePlhdr.checked) {
 			$('#iinv-div').style.display = 'none';
 			$('#norm-div').style.display = 'none';
+			$('#pseudo-div').style.display = 'none';
 		}
 		if (!start3.checked)
 			$('#skiplinks-div').style.display = 'none';
@@ -246,9 +245,9 @@ function init(tabs)
 			$('#customCssText').value = customCssText.value;
 		}
 		if (!fontFamily.checked) {
-			$('#font-div').style.display = 'none';
+			$('#fontFamilyName').style.display = 'none';
 		} else {
-			$('#font-div').style.display = 'flex';
+			$('#fontFamilyName').style.display = 'block';
 			$('#fontFamilyName').value = fontFamilyName.value;
 		}
 
@@ -266,6 +265,7 @@ function init(tabs)
 				advDimming:     advDimming.checked,
 				forcePlhdr:     forcePlhdr.checked,
 				forceIInv:      forceIInv.checked,
+				pseudoAB:	pseudoAB.checked,
 				forceOpacity:   forceOpacity.checked,
 				normalInc:      normalInc.checked,
 				normalInc2:     normalInc2.checked,
@@ -319,6 +319,7 @@ function init(tabs)
 			input_border.checked     = item.input_border;
 			forcePlhdr.checked       = item.forcePlhdr;
 			forceIInv.checked        = item.forceIInv;
+			pseudoAB.checked         = item.pseudoAB;
 			forceOpacity.checked     = item.forceOpacity;
 			skipWhites.checked       = item.skipWhites;
 			makeCaps.checked         = item.makeCaps;
@@ -345,6 +346,7 @@ function init(tabs)
 			if (!forcePlhdr.checked) {
 				$('#iinv-div').style.display = 'none';
 				$('#norm-div').style.display = 'none';
+				$('#pseudo-div').style.display = 'none';
 			}
 			if (!start3.checked)
 				$('#skiplinks-div').style.display = 'none';
@@ -357,9 +359,9 @@ function init(tabs)
 				$('#customCssText').value = customCssText.value;
 			}
 			if (!fontFamily.checked) {
-				$('#font-div').style.display = 'none';
+				$('#fontFamilyName').style.display = 'none';
 			} else {
-				$('#font-div').style.display = 'flex';
+				$('#fontFamilyName').style.display = 'block';
 				$('#fontFamilyName').value = fontFamilyName.value;
 			}
 			showRefreshBtn();
@@ -457,22 +459,26 @@ function init(tabs)
 				if (checkbox.id  === 'forceRev') {
 					let iinv_div = document.querySelector('#iinv-div');
 					let norm_div = document.querySelector('#norm-div');
+					let pseudo_div = document.querySelector('#pseudo-div');
 					let brt_div = document.querySelector('#brt-div');
 					let con_div = document.querySelector('#con-div');
 
 					if (forcePlhdr.checked) {
 						iinv_div.style.display = 'block';
 						norm_div.style.display = 'block';
+						pseudo_div.style.display = 'block';
 						brt_div.style.display = 'flex';
 						con_div.style.display = 'flex';
 					} else if (!advDimming.checked && !forcePlhdr.checked) {
 						iinv_div.style.display = 'none';
 						norm_div.style.display = 'none';
+						pseudo_div.style.display = 'none';
 						brt_div.style.display = 'none';
 						con_div.style.display = 'none';
 					} else if (advDimming.checked) {
 						iinv_div.style.display = 'none';
 						norm_div.style.display = 'none';
+						pseudo_div.style.display = 'none';
 						brt_div.style.display = 'flex';
 						con_div.style.display = 'flex';
 					}
@@ -495,9 +501,9 @@ function init(tabs)
 				}
 
 				if (checkbox.id === 'font-family') {
-					const font_div = document.querySelector('#font-div');
+					const font_div = document.querySelector('#fontFamilyName');
 					if (fontFamily.checked) {
-						font_div.style.display = 'flex';
+						font_div.style.display = 'block';
 						$('#fontFamilyName').value = fontFamilyName.value;
 					} else {
 						font_div.style.display = 'none';

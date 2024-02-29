@@ -22,6 +22,7 @@ chrome.runtime.onInstalled.addListener(function(details){
 			'skipColoreds': true,
 			'skipWhites': true,
 			'forceIInv': true,
+			'pseudoAB': false,
 			'normalInc': true,
 			'normalInc2': false,
 			'ssrules': false,

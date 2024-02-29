@@ -577,6 +577,23 @@ im.onerror = () => res();
 });
 }
 
+async function getBgImage(ch, gcs, bgim) {
+	if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && ch.getAttribute('loading') != 'lazy')
+		return false;
+	var im, src, src1, wi, he;
+	if (/var\(/i.test(bgim))
+		src1 = getVarValue(bgim);
+	else
+		src1 = bgim;
+	im = new Image();
+	src = src1.replace(/url\((['"])?(.*?)\1\)/gi, '$2');
+	im.src = src;
+	await waitForImage(im);
+	wi = parseInt(im.width);
+	he = parseInt(im.height);
+	return [wi, he];
+}
+
 async function isImage(ch, nc, imar, gcs, b_imgforce) {
 	if (!(ch instanceof Element)) return false;
 	if (b_imgforce[nc] != true) b_imgforce[nc] = false;
@@ -825,23 +842,6 @@ function getCSS(cfg) {
 		g_m = multiplyMatrices(g_m2, Matrix.invertNHue());
 	}
 
-	let fntFmly = `*{font-family:var(--g_btvfont)!important;}`;
-	if (cfg.fontFamily) {
-		document.documentElement.style.setProperty('--g_btvfont',cfg.fontFamilyName);
-		g_fntRule = true;
-	} else {
-		fntFmly = '';
-		document.documentElement.style.setProperty('--g_btvfont','');
-		g_fntRule = false;
-		let rul = 'var(--g_btvfont)';
-		let rl = style_node.sheet.cssRules;
-		let x = 0;
-		for (x = 0; x < rl.length; x++ )
-			if (rl[x].cssText.indexOf(rul) > -1) break;
-		if (x < rl.length)
-			style_node.sheet.deleteRule(x);
-	}
-
 	let cust = '';
 	if (cfg.customCss)
 		cust = cfg.customCssText;
@@ -897,7 +897,7 @@ function getCSS(cfg) {
 	str_style = `brightness(${brght}) contrast(${ctrst})`;
 	str_style2 = '1';
 
-	return `${bold}${size_inc}${g_mag}${form_border}${underline}${fntFmly}${cust}`;
+	return `${bold}${size_inc}${g_mag}${form_border}${underline}${cust}`;
 }
 
 function createElem()
@@ -945,6 +945,7 @@ async function init()
 		'ssrules',
 		'forcePlhdr',
 		'forceIInv',
+		'pseudoAB',
 		'skipWhites',
 		'makeCaps',
 		'start3',
@@ -1091,11 +1092,11 @@ async function start(cfg, url)
 	if (cfg.forcePlhdr || cfg.advDimming)
 	if (finalLightness < 0.5)  {
 		if (cfg.advDimming && cfg.forcePlhdr) {
-			cfg.forcePlhdr = true;
-			cfg.advDimming = false;
 			var cs = css_node.nodeValue;
 			var rcs = cs.replaceAll(/filter.*?brightness.*?contrast.*?important\;/mg,'');
 			css_node.nodeValue = rcs;
+			cfg.forcePlhdr = true;
+			cfg.advDimming = false;
 		} else {
 			if (cfg.advDimming) {
 				cfg.forcePlhdr = false;
@@ -1125,6 +1126,7 @@ async function start(cfg, url)
 	let style_rule = "";
 	if (cfg.forcePlhdr && cfg.forceIInv) {
 	style_rule += "IMG,SVG,CANVAS,OBJECT,VIDEO,EMBED,INPUT[type='image'] { filter:invert(1); }";
+	style_rule += "._btvinvertb_:before,._btvinverta_:after { filter:invert(1); }";
 	style_rule += "[style*='background-image:url'],[style*='background-image:var'],[style*='background-image: url'],[style*='background-image: var']  { filter:invert(1); }";
 	style_rule += "body[style*='background-image:url'],body[style*='background-image:var'],body[style*='background-image: url'],body[style*='background-image: var'] { filter:unset!important; }";
 	style_rule += "[style*='background-image:none'],[style*='background-image: none'] { filter:unset!important; }";
@@ -1192,7 +1194,7 @@ async function start(cfg, url)
 		let value = rule.style.cssText;
 		if (typeof m_done[key] == 'undefined') m_done[key] = 0;
 		if ((cfg.forcePlhdr && cfg.normalInc) || cfg.advDimming)
-		if (m_done[key] < 3 && (rule.style.color || rule.style.backgroundColor || rule.style.borderColor || rule.style.backgroundImage)) {
+		if (m_done[key] < 3 && (rule.style.color || rule.style.backgroundColor || rule.style.borderColor)) {
 			m_done[key]++;
 			if (/\:(before|after)/i.test(key)) {
 				if (rule.style.color && rule.style.color.indexOf('calc\(') < 0) {
@@ -1435,11 +1437,6 @@ async function start(cfg, url)
 					}
 					}
 				}
-				if (rule.style.backgroundImage) {
-					let a = rule.style.getPropertyValue('background-image');
-					if (!/gradient/i.test(rule.style.backgroundImage))
-						rule.style.setProperty('filter','invert(1)','important');
-				}
 			} else {
 			if (rule.style.color && rule.style.color.indexOf('calc\(') < 0) {
 			var colr, tcol;
@@ -1643,7 +1640,29 @@ async function start(cfg, url)
 		}
 	}
 	if (n_rulecount < 3) { console.log('Rule count cleared'); n_rulecount = 0; }
-		var zoom_mode = false, orig_val = [], t_zoom = 0, t_zc = 0, l_z = [], orig_cursor = '';
+
+	if (!cfg.fontFamilyName || !cfg.fontFamily) {
+		let rul = 'var(--g_btvfont)';
+		if (typeof style_node.sheet != 'undefined') {
+		let rl = style_node.sheet.cssRules;
+		let x = 0;
+		for (x = 0; x < rl.length; x++ )
+			if (rl[x].cssText.indexOf(rul) > -1) break;
+		if (x < rl.length)
+			style_node.sheet.deleteRule(x);
+		}
+	} else {
+		let fntFmly = `*{font-family:var(--g_btvfont)!important;}`;
+		if (cfg.fontFamily) {
+			document.documentElement.style.setProperty('--g_btvfont',cfg.fontFamilyName);
+			g_fntRule = true;
+		} else {
+			fntFmly = '';
+			document.documentElement.style.setProperty('--g_btvfont','');
+			g_fntRule = false;
+		}
+		style_node.sheet.insertRule(fntFmly, 0);
+	}
 
 		if (cfg.forcePlhdr && cfg.forceIInv) {
 		let ms = null;
@@ -1659,6 +1678,8 @@ async function start(cfg, url)
 			b_noemo = true;
 		}
 		}
+
+		var zoom_mode = false, orig_val = [], t_zoom = 0, t_zc = 0, l_z = [], orig_cursor = '';
 
 			window.addEventListener("mousemove", mousemove);
 			window.addEventListener("mouseover", mousemove);
@@ -1833,6 +1854,20 @@ async function start(cfg, url)
 				b_iimg[nc] = await isImage(n, nc, img_area, gcs, b_imgforce);
 			else
 				b_iimg[nc] = false;
+			if (cfg.pseudoAB && cfg.forcePlhdr && cfg.forceIInv) {
+			let gcsa = getComputedStyle(n,':before');
+			if (gcsa.backgroundImage && gcsa.backgroundImage != 'none') {
+				let arr = await getBgImage(n, gcsa, gcsa.backgroundImage);
+				if (arr[0] && arr[1])
+					n.className += ' _btvinvertb_ ';
+			}
+			gcsa = getComputedStyle(n,':after');
+			if (gcsa.backgroundImage && gcsa.backgroundImage != 'none') {
+				let arr = await getBgImage(n, gcsa, gcsa.backgroundImage);
+				if (arr[0] && arr[1])
+					n.className += ' _btvinverta_ ';
+			}
+			}
 			if (b_iimg[nc]) {
 				images.push(n);
 				let img_children = Array.from(n.getElementsByTagName("*"));
