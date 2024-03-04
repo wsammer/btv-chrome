@@ -129,7 +129,7 @@ function hslToRGB(hsl) {
 	let h = hsl[0];
 	let s = hsl[1];
 	let l = hsl[2];
-	let a = typeof hsl[3] != 'undefined' ? hsl[3] : 1;
+	let a = hsl[3] != undefined ? hsl[3] : 1;
 	if (s === 0) {
 		const [r, b, g] = [l, l, l].map((x) => Math.round(x * 255));
 		return {r, g, b, a};
@@ -170,7 +170,7 @@ function getHSLarr(hsl_str)
 	} else {
 		hsl = hsl_str.substring(4, x).replace(/ /g, '').split(',');
 	}
-	if (typeof hsl[3] == 'undefined') hsl[3] = 1;
+	if (hsl[3] == undefined) hsl[3] = 1;
 	if (hsl[0].search('deg') > 0) hsl[0] = parseFloat(hsl[0]);
 	if (hsl[1].indexOf('%') > 0) hsl[1] = parseFloat(hsl[1])/100;
 	if (hsl[2].indexOf('%') > 0) hsl[2] = parseFloat(hsl[2])/100;
@@ -186,7 +186,7 @@ function getRGBarr(rgba_str)
 	} else {
 		rgb = rgba_str.substring(4, x).replace(/ /g, '').split(',');
 	}
-	if (typeof rgb[3] == 'undefined') rgb[3] = 1;
+	if (rgb[3] == undefined) rgb[3] = 1;
 	return rgb;
 }
 
@@ -199,7 +199,7 @@ function clamp(x, min, max) {
 let gcol_cache = new Map();
 function applyColorMatrix([r, g, b]) {
 	let col = [r,g,b];
-	if (typeof gcol_cache.get(col) != 'undefined')
+	if (gcol_cache.get(col) != undefined)
 		return gcol_cache.get(col);
 //	const rgb = [[r / 255], [g / 255], [b / 255], [1], [1]];
 	const rgb = [r / 255, g / 255, b / 255, 1, 1];
@@ -208,7 +208,7 @@ function applyColorMatrix([r, g, b]) {
 	const x = [0, 1, 2].map((i) =>
 	clamp(Math.round(result[i] * 255), 0, 255));
 //	const x = [ Math.round(result[0]*255), Math.round(result[1]*255), Math.round(result[2]*255) ];
-	if (typeof gcol_cache.get(col) == 'undefined')
+	if (gcol_cache.get(col) == undefined)
 		gcol_cache.set(col, x);
 	return x;
 }
@@ -388,7 +388,7 @@ focalAnchors.injectAnchorText = function (node,weight) {
 	let words = txtc.split(/\b/);
 	const spann = document.createElement('span');
 	for (let wordID = 0; wordID < words.length; wordID++) {
-		if (typeof words[wordID] == 'undefined' || words[wordID] == null) continue;
+		if (words[wordID] == undefined || words[wordID] == null) continue;
 		if (!/(PRE|CODE)/i.test(tag) && (words[wordID].search(/\n\t+/) != -1 || words[wordID].search(/\n+\ /) != -1)) 
 			if ((wordID > 0 && words[wordID-1].search(/\s/mg) != -1) || (wordID == 0 && words.length == 1))
 			continue;
@@ -413,7 +413,7 @@ focalAnchors.injectAnchorText = function (node,weight) {
 	let words = txtc.split(' ');
 	const spann = document.createElement('span');
 	for (let wordID = 0; wordID < words.length; wordID++) {
-		if (typeof words[wordID] == 'undefined' || words[wordID] == null || words[wordID].length == 0) continue;
+		if (words[wordID] == undefined || words[wordID] == null || words[wordID].length == 0) continue;
 		if (!/(PRE|CODE)/i.test(tag) && words[wordID].replaceAll(/\s/g,'').length == 0 && (words[wordID].search(/\n+\t*/) != -1 || words[wordID].search(/\n+\ /) != -1)) continue;
 		let word = words[wordID];
 		let boldNum = Math.min(word.length,3);
@@ -451,7 +451,7 @@ function invertEmojis(node) {
 	if (node.parentNode && node.parentNode.parentNode) ptag = node.parentNode.parentNode.nodeName;
 	let words = txtc.split(/' '/);
 	for (let wordID = 0; wordID < words.length; wordID++) {
-		if (typeof words[wordID] == 'undefined' || words[wordID] == null || words[wordID].length == 0) continue;
+		if (words[wordID] == undefined || words[wordID] == null || words[wordID].length == 0) continue;
 		if (!/(PRE|CODE)/i.test(tag) && words[wordID].replaceAll(/\s/g,'').length == 0) continue; // && (words[wordID].search(/\n+\t*/) != -1 || words[wordID].search(/\n+\ /) != -1)) continue;
 		if (!/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/umg.test(words[wordID])) {
 		let word = words[wordID];
@@ -498,7 +498,7 @@ function containsText(node, mp, nc, map, b_ctext, nodes)
 	let len = 0;
 	var r, tot;
 	if (mp.get(node) == true) return b_ctext[nc];
-	if (typeof node.innerText != 'undefined' && mp.get(node) != true && node.innerText != null && node.innerText.length > 0) {
+	if (node.innerText != undefined && mp.get(node) != true && node.innerText != null && node.innerText.length > 0) {
 		if (node.outerHTML.indexOf('<SCRIPT>') < 0 && node.outerHTML.indexOf('<STYLE>') < 0) {
 		r = node.innerText.replace(/[^\S]+/g,"");
 		len = len + parseInt(r.length);
@@ -511,7 +511,7 @@ function containsText(node, mp, nc, map, b_ctext, nodes)
 	 	r = node.nodeValue.replace(/[^\S]+/g,"");
 		len = len + parseInt(r.length);
 	}
-	if (typeof node.value != 'undefined' && node.value != null && node.value.length > 0) {
+	if (node.value != undefined && node.value != null && node.value.length > 0) {
 		if (node.outerHTML.indexOf('<SCRIPT>') < 0 && node.outerHTML.indexOf('<STYLE>') < 0) {
 		r = node.value.replace(/[^\S]+/g,"");
 		len = len + parseInt(r.length);
@@ -525,19 +525,19 @@ function containsText(node, mp, nc, map, b_ctext, nodes)
 	for (let x=0; x < childn.length; x++) {
 		ch = childn[x];
 		len = 0;
-		if (typeof map.get(ch) == 'undefined')
+		if (map.get(ch) == undefined)
 			map.set(ch, map.get(nodes[0])+nodes.indexOf(ch));
 		if (mp.get(ch) == true) return b_ctext[map.get(ch)];
 		if (ch.children.length > 0)
 			len = containsText(ch, mp, map.get(ch), map, b_ctext, nodes);
 		if (ch instanceof Element && ch.outerHTML.indexOf('<SCRIPT>') < 0 && ch.outerHTML.indexOf('<STYLE>') < 0) {
-			if (typeof ch.innerText != 'undefined' && ch.innerText != null && ch.innerText.length > 0) {
+			if (ch.innerText != undefined && ch.innerText != null && ch.innerText.length > 0) {
 				r = ch.innerText.replace(/[^\S]+/g,"");
 				len = len + parseInt(r.length);
-			} else if (typeof ch.value != 'undefined' && ch.value != null && ch.value.length > 0) {
+			} else if (ch.value != undefined && ch.value != null && ch.value.length > 0) {
 				r = ch.value.replace(/[^\S]+/g,'');
 				len = len + parseInt(r.length);
-			} else if (typeof ch.textContent != 'undefined' && ch.textContent != null && ch.textContent.length > 0) {
+			} else if (ch.textContent != undefined && ch.textContent != null && ch.textContent.length > 0) {
 				r = ch.textContent.replace(/[^\S]+/g,'');
 				len = len + parseInt(r.length);
 			}
@@ -555,7 +555,7 @@ function containsText(node, mp, nc, map, b_ctext, nodes)
 	mp.set(node, true);
 	}
 
-	if (typeof b_ctext[nc] == 'undefined')
+	if (b_ctext[nc] == undefined)
 		b_ctext[nc] = len;
 	return len;
 }
@@ -666,7 +666,7 @@ async function isImage(ch, nc, imar, gcs, b_imgforce) {
 		} else {
 			return false;
 		}
-	} else if (typeof chsrc != 'undefined' && chsrc != null && chsrc != '' && ch.display != 'none' && ch.type != null && typeof ch.type != 'undefined' && ch.type.toLowerCase() == 'image' && !/(php|htm[l]?|asp[x]?)[\"\'\)]/i.test(chsrc) && !/(php|htm[l]?|asp[x]?)[\"\'\)]/i.test(bgim)  && (/(\/|http|url)/ig.test(chsrc))) {
+	} else if (chsrc != undefined && chsrc != null && chsrc != '' && ch.display != 'none' && ch.type != null && ch.type != undefined && ch.type.toLowerCase() == 'image' && !/(php|htm[l]?|asp[x]?)[\"\'\)]/i.test(chsrc) && !/(php|htm[l]?|asp[x]?)[\"\'\)]/i.test(bgim)  && (/(\/|http|url)/ig.test(chsrc))) {
 		if ((/(hidden|none)/i.test(gcs.visibility) || /(hidden|none)/i.test(gcs.display)) && ch.getAttribute('loading') != 'lazy')
 			return false;
 		var im, src, src1;
@@ -739,12 +739,12 @@ function getBgColor(parnt, bg_color)
 	let disp = '';
 
 	let transparent = 'rgba(0, 0, 0, 0)';
-	while (bg_color == transparent && parnt != null && typeof parnt != 'undefined' && parnt.nodeName != 'BODY') {
+	while (bg_color == transparent && parnt != null && parnt != undefined) {
 		if (parnt instanceof Element) {
 		let gcs = getComputedStyle(parnt);
 		bbg_color = gcs.backgroundColor;
 		disp = gcs.display || gcs.visibility;
-		if (typeof bbg_color != 'undefined' && bbg_color != null && bbg_color != '' && disp != 'none' && disp != 'hidden' && bbg_color != transparent) {
+		if (bbg_color != undefined && bbg_color != null && bbg_color != '' && disp != 'none' && disp != 'hidden' && bbg_color != transparent) {
 			bg_color = bbg_color;
 			break;
 		}
@@ -762,12 +762,12 @@ function getBgBrightness(parnt, bg_color)
 	let disp = '';
 
 	let transparent = 'rgba(0, 0, 0, 0)';
-	while (bg_color == transparent && parnt != null && typeof parnt != 'undefined' && parnt.nodeName != 'BODY') {
+	while (bg_color == transparent && parnt != null && parnt != undefined) {
 		if (parnt instanceof Element) {
 		let gcs = getComputedStyle(parnt);
 		bbg_color = gcs.backgroundColor;
 		disp = gcs.display || gcs.visibility;
-		if (typeof bbg_color != 'undefined' && bbg_color != null && bbg_color != '' && disp != 'none' && disp != 'hidden' && bbg_color != transparent) {
+		if (bbg_color != undefined && bbg_color != null && bbg_color != '' && disp != 'none' && disp != 'hidden' && bbg_color != transparent) {
 			bg_color = bbg_color;
 			break;
 		}
@@ -907,7 +907,7 @@ function createElem()
 	style_node = doc.createElement('style');
 	style_node.setAttribute('id', '_btv_');
 	let d_head = doc.head || doc.getElementsByTagName('HEAD')[0];
-	if (typeof d_head != 'undefined' && d_head != null)
+	if (d_head != undefined && d_head != null)
 		d_head.appendChild(style_node);
 	else
 		d_head = '';
@@ -918,7 +918,7 @@ function createElem()
 async function init()
 {
 	if (document.getElementById('_btv_')) {
-		if (style_node != null && typeof style_node != 'undefined') {
+		if (style_node != null && style_node != undefined) {
 			style_node.appendChild(css_node);
 			return;
 		}
@@ -1171,6 +1171,7 @@ async function start(cfg, url)
 	let rn = 0;
 	let b_sec = false;
 	let body_nfz = 16;
+	let b_bdone = false;
 	if (browser_sfz) body_nfz = parseInt(browser_sfz);
 	for (var si = 0; si < document.styleSheets.length; si++) {
 		var sheet,rules
@@ -1192,7 +1193,7 @@ async function start(cfg, url)
 		if (rule.selectorText && rule.style) {
 		let key = rule.selectorText;
 		let value = rule.style.cssText;
-		if (typeof m_done[key] == 'undefined') m_done[key] = 0;
+		if (m_done[key] == undefined) m_done[key] = 0;
 		if ((cfg.forcePlhdr && cfg.normalInc) || cfg.advDimming)
 		if (m_done[key] < 3 && (rule.style.color || rule.style.backgroundColor || rule.style.borderColor)) {
 			m_done[key]++;
@@ -1447,7 +1448,7 @@ async function start(cfg, url)
 				colr = tcol;
 			if (colr.substring(0,3) == 'rgb') {
 			let fgarr = getRGBarr(colr);
-			if (typeof m_sty[fgarr] == 'undefined') {
+			if (m_sty[fgarr] == undefined) {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
@@ -1458,7 +1459,7 @@ async function start(cfg, url)
 			} else if (colr.substring(0,3) == 'hsl') {
 			let c = getHSLarr(colr);
 			let fgarr = hslToRGB(c);
-			if (typeof m_sty[fgarr] == 'undefined') {
+			if (m_sty[fgarr] == undefined) {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
@@ -1469,7 +1470,7 @@ async function start(cfg, url)
 			} else if (colr.substring(0,1) == '#') {
 			let c = colr.length == 4 ? colr+'f' : colr+'ff';
 			let fgarr = hexToRGBA(c);
-			if (typeof m_sty[fgarr] == 'undefined') {
+			if (m_sty[fgarr] == undefined) {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
@@ -1488,7 +1489,7 @@ async function start(cfg, url)
 				colr = tcol;
 			if (colr.substring(0,3) == 'rgb') {
 			let fgarr = getRGBarr(colr);
-			if (typeof m_sty[fgarr] == 'undefined') {
+			if (m_sty[fgarr] == undefined) {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
@@ -1499,7 +1500,7 @@ async function start(cfg, url)
 			} else if (colr.substring(0,3) == 'hsl') {
 			let c = getHSLarr(colr);
 			let fgarr = hslToRGB(c);
-			if (typeof m_sty[fgarr] == 'undefined') {
+			if (m_sty[fgarr] == undefined) {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
@@ -1510,7 +1511,7 @@ async function start(cfg, url)
 			} else if (colr.substring(0,1) == '#') {
 			let c = colr.length == 4 ? colr+'f' : colr+'ff';
 			let fgarr = hexToRGBA(c);
-			if (typeof m_sty[fgarr] == 'undefined') {
+			if (m_sty[fgarr] == undefined) {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
@@ -1529,7 +1530,7 @@ async function start(cfg, url)
 				colr = tcol;
 			if (colr.substring(0,3) == 'rgb') {
 			let fgarr = getRGBarr(colr);
-			if (typeof m_sty[fgarr] == 'undefined') {
+			if (m_sty[fgarr] == undefined) {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
@@ -1540,7 +1541,7 @@ async function start(cfg, url)
 			} else if (colr.substring(0,3) == 'hsl') {
 			let c = getHSLarr(colr);
 			let fgarr = hslToRGB(c);
-			if (typeof m_sty[fgarr] == 'undefined') {
+			if (m_sty[fgarr] == undefined) {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
@@ -1551,7 +1552,7 @@ async function start(cfg, url)
 			} else if (colr.substring(0,1) == '#') {
 			let c = colr.length == 4 ? colr+'f' : colr+'ff';
 			let fgarr = hexToRGBA(c);
-			if (typeof m_sty[fgarr] == 'undefined') {
+			if (m_sty[fgarr] == undefined) {
 				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
@@ -1563,7 +1564,7 @@ async function start(cfg, url)
 			}
 			}
 		}
-		if (/(\bbody|\bhtml|\[s__)/i.test(key) && cfg.threshold > 0 && cfg.size > 0 && rule.style.fontSize) {
+		if (/(\bbody|\bhtml|\[s__)/i.test(key) && b_bdone != true && cfg.threshold > 0 && cfg.size > 0 && rule.style.fontSize) {
 			if (/\[s__/.test(key)) continue;
 			var rt, rt1;
 			rt1 = rule.style.fontSize;
@@ -1576,6 +1577,7 @@ async function start(cfg, url)
 			if (nfz <= cfg.threshold && nfz > 1) {
 			txtrul = key+' { font-size: '+f2_sizes[nfz]+' !important; }';
 			n_rulecount++;
+			b_bdone = true;
 			if (!cfg.ssrules) m_done[key] = 3;
 			}
 			}
@@ -1643,7 +1645,7 @@ async function start(cfg, url)
 
 	if (!cfg.fontFamilyName || !cfg.fontFamily) {
 		let rul = 'var(--g_btvfont)';
-		if (typeof style_node.sheet != 'undefined') {
+		if (style_node.sheet != undefined) {
 		let rl = style_node.sheet.cssRules;
 		let x = 0;
 		for (x = 0; x < rl.length; x++ )
@@ -1876,7 +1878,7 @@ async function start(cfg, url)
 					n_imgcount++;
 				}
 				if (n.parentNode && b_iimg[map.get(n.parentNode)]) {
-					if (typeof map.get(n.parentNode) == 'undefined')
+					if (map.get(n.parentNode) == undefined)
 						map.set(n.parentNode, map.get(nodes[0])+nodes.indexOf(n.parentNode));
 					b_chimg[map.get(n.parentNode)] = true;
 				}
@@ -1891,10 +1893,10 @@ async function start(cfg, url)
 		let save_nc = node_count;
 		let node = doc.body;
 		if (cfg.forcePlhdr && b_idone[node_count] != true) {
-		if (typeof node == 'undefined' || node == null)
+		if (node == undefined || node == null)
 			node = document.getElementsByTagName('BODY')[0];
 
-		if (!(typeof node == 'undefined' || node == null)) {
+		if (!(node == undefined || node == null)) {
 		let pnode = doc.getElementsByTagName('HTML')[0];
 
 		node_count = map.get(node);
@@ -1916,7 +1918,7 @@ async function start(cfg, url)
 			let n_hdrs = hdrs.length;
 			if (b_hdr && n_hdrs < 5) {
 				hdr = hdrs[0];
-				if (typeof hdr == 'undefined' || hdr == null) hdr = hdrs[1];
+				if (hdr == undefined || hdr == null) hdr = hdrs[1];
 			} else {
 				if (!b_html)
 					hdrs = Array.from(document.body.getElementsByTagName('*'));
@@ -1924,9 +1926,9 @@ async function start(cfg, url)
 					hdrs = Array.from(htm.getElementsByTagName('*'));
 				b_hdr = false;
 				for (hdr of hdrs) {
-				if (typeof hdr.className != 'undefined' && hdr.className != null && hdr.className.length > 0 && /header/i.test(hdr.className)) {
+				if (hdr.className != undefined && hdr.className != null && hdr.className.length > 0 && /header/i.test(hdr.className)) {
 					b_hdr = true; break;
-				} else if (typeof hdr.id != 'undefined' && hdr.id != null && hdr.id.length > 0 && /header/i.test(hdr.id)) {
+				} else if (hdr.id != undefined && hdr.id != null && hdr.id.length > 0 && /header/i.test(hdr.id)) {
 					b_hdr = true; break;
 				}
 				}
@@ -1959,7 +1961,7 @@ async function start(cfg, url)
 			if (!imsrc || imsrc == 'none')
 				imsrc = '';
 			if (!b_imgforce[n_c] || b_ctext[n_c] > 95)
-			if (!/(IMG|SVG|VIDEO|OBJECT|EMBED|CANVAS)/i.test(img.nodeName) && !/(slide|banner|background.*page|page.*background)/ig.test(img.className) && ((typeof imsrc != 'undefined' && imsrc != null && imsrc != '' && !/(\/|http|url)/ig.test(imsrc)) || (typeof bgim != 'undefined' && bgim != '' && bgim != 'none' && !/(\/|http|url)/ig.test(bgim)) || (b_ctext[n_c] > 95 && !b_imgforce[n_c])) || (((img_area[n_c] > 0 && img_area[n_c] < 399 && img.textContent.indexOf(' ') > 0 && !/button/i.test(img.className)) || /nav/i.test(img.className)) && !b_imgforce[n_c] && img_area[n_c] < 399 && img_area[n_c] > 0)) {
+			if (!/(IMG|SVG|VIDEO|OBJECT|EMBED|CANVAS)/i.test(img.nodeName) && !/(slide|banner|background.*page|page.*background)/ig.test(img.className) && ((imsrc != undefined && imsrc != null && imsrc != '' && !/(\/|http|url)/ig.test(imsrc)) || (bgim != undefined && bgim != '' && bgim != 'none' && !/(\/|http|url)/ig.test(bgim)) || (b_ctext[n_c] > 95 && !b_imgforce[n_c])) || (((img_area[n_c] > 0 && img_area[n_c] < 399 && img.textContent.indexOf(' ') > 0 && !/button/i.test(img.className)) || /nav/i.test(img.className)) && !b_imgforce[n_c] && img_area[n_c] < 399 && img_area[n_c] > 0)) {
 				if (!(hdr && hdr.contains(img))) {
 				img.style.setProperty('filter','unset', 'important');
 				continue;
@@ -1969,13 +1971,13 @@ async function start(cfg, url)
 				continue;
 			}
 			let bnav = false;
-			if (typeof pisty == 'undefined' || pisty == null) pisty = '';
-			if (typeof isty == 'undefined' || isty == null) isty = '';
+			if (pisty == undefined || pisty == null) pisty = '';
+			if (isty == undefined || isty == null) isty = '';
 			let pch = img;
 			if (hdr != null && hdr.contains(img) && cfg.skipNavSection) {
 				bnav = true;
 			} else if (cfg.skipNavSection) {
-			while (pch != null && typeof pch != 'undefined' && pch.nodeName != 'BODY') {
+			while (pch != null && pch != undefined && pch.nodeName != 'BODY') {
 				if (pch && /(NAV|HEADER)/i.test(pch.nodeName) && cfg.skipNavSection) {
 					if (pch.nodeName == 'NAV' || (pch.nodeName == 'HEADER' && n_hdrs < 5)) {
 					bnav = true;
@@ -2014,7 +2016,7 @@ async function start(cfg, url)
 		b_idone = {};
 
 		if (cfg.advDimming)
-			if (!cfg.ssrules && n_imgcount > 2) {
+			if (!cfg.ssrules || n_imgcount > 2) {
 			for (let img of images) {
 				let pn = img;
 				let lastn = pn;
@@ -2067,7 +2069,7 @@ async function start(cfg, url)
 				}
 			}
 
-			if (cfg.forceOpacity && !cfg.ssrules && !b_body && cfg.forcePlhdr && pnode != null && pnode.nodeName == 'BODY') {
+			if (cfg.forceOpacity && !cfg.start3 && cfg.skipLinks && !b_body && cfg.forcePlhdr && pnode != null && pnode.nodeName == 'BODY') {
 				let fsty = getComputedStyle(pnode).getPropertyValue('background-color');
 				if (fsty == null || fsty == '' || fsty == 'none') fsty = 'rgb(0,0,0)';
 				let bcol = getRGBarr(fsty);
@@ -2087,7 +2089,7 @@ async function start(cfg, url)
 				sk = true;
 			}
 
-			if (typeof style == 'undefined')
+			if (style == undefined)
 				style = getComputedStyle(node);
 
 			node_count = map.get(node);
@@ -2101,7 +2103,7 @@ async function start(cfg, url)
 			if (cfg.input_border && !node.getAttribute('b__'))
 				node.setAttribute('b__', '');
 
-			if (cfg.normalInc && cfg.forcePlhdr && !b_iimg[node_count] && !nodes_behind_inv.includes(node) && typeof m_fcol.get(node) == 'undefined' && typeof m_bcol.get(node) == 'undefined' && typeof m_bocol.get(node) == 'undefined') {
+			if (cfg.normalInc && cfg.forcePlhdr && !b_iimg[node_count] && !nodes_behind_inv.includes(node) && m_fcol.get(node) == undefined && m_bcol.get(node) == undefined && m_bocol.get(node) == undefined) {
 				var cs,pcs;
 				let err = false;
 				try {
@@ -2143,9 +2145,9 @@ async function start(cfg, url)
 				} else {
 				if (fg.length > 0) {
 					let fgarr = getRGBarr(fg);
-					if (typeof m_sty[fgarr] != 'undefined' || (typeof b_idone[fgarr] != 'undefined' && cfg.normalInc2)) {
+					if (m_sty[fgarr] != undefined || (b_idone[fgarr] != undefined && cfg.normalInc2)) {
 						var fgr;
-						if (cfg.normalInc2 && typeof b_idone[fgarr] != 'undefined')
+						if (cfg.normalInc2 && b_idone[fgarr] != undefined)
 							fgr = b_idone[fgarr];
 						else
 							fgr = m_sty[fgarr];
@@ -2172,9 +2174,9 @@ async function start(cfg, url)
 				if (bog.length > 0) {
 					let fgarr = getRGBarr(bog);
 					var fgr;
-					if (typeof m_sty[fgarr] != 'undefined' || (typeof b_idone[fgarr] != 'undefined' && cfg.normalInc2)) {
+					if (m_sty[fgarr] != undefined || (b_idone[fgarr] != undefined && cfg.normalInc2)) {
 						var fgr;
-						if (cfg.normalInc2 && typeof b_idone[fgarr] != 'undefined')
+						if (cfg.normalInc2 && b_idone[fgarr] != undefined)
 							fgr = b_idone[fgarr];
 						else
 							fgr = m_sty[fgarr];
@@ -2211,9 +2213,9 @@ async function start(cfg, url)
 				}
 				if (bg.length > 0) {
 					let fgarr = getRGBarr(bg);
-					if (typeof m_sty[fgarr] != 'undefined' || (typeof b_idone[fgarr] != 'undefined' && cfg.normalInc2)) {
+					if (m_sty[fgarr] != undefined || (b_idone[fgarr] != undefined && cfg.normalInc2)) {
 						var fgr;
-						if (cfg.normalInc2 && typeof b_idone[fgarr] != 'undefined')
+						if (cfg.normalInc2 && b_idone[fgarr] != undefined)
 							fgr = b_idone[fgarr];
 						else
 							fgr = m_sty[fgarr];
@@ -2284,10 +2286,10 @@ async function start(cfg, url)
 
 			if (cfg.start3)
 			if (!node.hasAttribute(focalAnchors.attrNameContainer) && b_ctext[node_count] > 1) {
-				if (typeof doc_obs != 'undefined' && doc_obs != null)
+				if (doc_obs != undefined && doc_obs != null)
 					doc_obs.disconnect();
 				focalAnchors.toggleAnchorsByRef(node, false, cfg.skipLinks, cfg.weight);
-				if (typeof doc_obs != 'undefined' && doc_obs != null)
+				if (doc_obs != undefined && doc_obs != null)
 					doc_obs.observe(document.body, { childList: true, subtree: true });
 			}
 
@@ -2364,7 +2366,7 @@ async function start(cfg, url)
 				}
 			}
 			}
-			if (cfg.threshold > 0 && (!b_iimg[node_count] || b_ctext[node_count] > 0 || (/\b(INPUT|TEXTAREA|TEXT)/i.test(tag) && is_oinput))) {
+			if (cfg.threshold > 0 && (!b_iimg[node_count] || b_ctext[node_count] > 0 || (/^(INPUT|SELECT|TEXTAREA|TEXT)/i.test(tag) && is_oinput))) {
 				let nsty = node.getAttribute('style');
 				if (nsty == null) nsty = '';
 				if (cfg.normalInc2)
@@ -2376,10 +2378,10 @@ async function start(cfg, url)
 					let cful = calcColorfulness(col);
 					ocol = col;
 					pcol = '';
-					if (typeof b_idone[ocol] == 'undefined' && col.length > 0 && cful > 34) {
+					if (b_idone[ocol] == undefined && col.length > 0 && cful > 34) {
 						pcol = colorblindFg(col, cfg, nodes_behind_inv.includes(node), /invert/.test(style.filter), n_inv);
 						cola = getRGBarr(pcol);
-					} else if (typeof b_idone[ocol] != 'undefined' && col.length > 0 && cful > 34) {
+					} else if (b_idone[ocol] != undefined && col.length > 0 && cful > 34) {
 						cola = b_idone[ocol];
 						pcol = 'rgba('+cola[0]+','+cola[1]+','+cola[2]+','+cola[3]+')';
 					}
@@ -2395,10 +2397,10 @@ async function start(cfg, url)
 					let cful = calcColorfulness(col);
 					ocol = col;
 					pcol = '';
-					if (typeof b_idone[ocol] == 'undefined' && col.length > 0 && cful > 34) {
+					if (b_idone[ocol] == undefined && col.length > 0 && cful > 34) {
 						pcol = colorblindBg(col, cfg, nodes_behind_inv.includes(node), /invert/.test(style.filter), n_inv);
 						cola = getRGBarr(pcol);
-					} else if (typeof b_idone[ocol] != 'undefined' && col.length > 0 && cful > 34) {
+					} else if (b_idone[ocol] != undefined && col.length > 0 && cful > 34) {
 						cola = b_idone[ocol];
 						pcol = 'rgba('+cola[0]+','+cola[1]+','+cola[2]+','+cola[3]+')';
 					}
@@ -2414,10 +2416,10 @@ async function start(cfg, url)
 					let cful = calcColorfulness(col);
 					ocol = col;
 					pcol = '';
-					if (typeof b_idone[ocol] == 'undefined' && col.length > 0 && cful > 34) {
+					if (b_idone[ocol] == undefined && col.length > 0 && cful > 34) {
 						pcol = colorblindFg(col, cfg, nodes_behind_inv.includes(node), /invert/.test(style.filter), n_inv);
 						cola = getRGBarr(pcol);
-					} else if (typeof b_idone[ocol] != 'undefined' && col.length > 0 && cful > 34) {
+					} else if (b_idone[ocol] != undefined && col.length > 0 && cful > 34) {
 						cola = b_idone[ocol];
 						pcol = 'rgba('+cola[0]+','+cola[1]+','+cola[2]+','+cola[3]+')';
 					}
@@ -2428,8 +2430,8 @@ async function start(cfg, url)
 					}
 					}
 				}
-				if (!cfg.skipHeights && (b_ctext[node_count] > 2 || (node.type && is_oinput)) && (node.getElementsByTagName('*').length < 4 || (cfg.start3 && node.hasAttribute(focalAnchors.attrNameContainer) && node.getElementsByTagName('*').length < 50)))
-					node.setAttribute('h__', cfg.threshold);
+				if (!cfg.skipHeights && !node.hasAttribute('s__') && (b_ctext[node_count] > 2 || (node.type && is_oinput)) && (node.getElementsByTagName('*').length < 4 || (cfg.start3 && node.hasAttribute(focalAnchors.attrNameContainer) && node.getElementsByTagName('*').length < 50)))
+					node.setAttribute('h__', 3);
 				if (cfg.makeCaps) {
 					if (eng)
 						node.style.setProperty('font-variant-caps', 'small-caps');
@@ -2442,7 +2444,7 @@ async function start(cfg, url)
 				if (cfg.forcePlhdr && cfg.forceIInv && !b_noemo) {
 				if (b_emo[node_count] != true && node.children.length < 10) {
 					if (/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/umg.test(node.textContent)) {
-					if (typeof doc_obs != 'undefined' && doc_obs != null)
+					if (doc_obs != undefined && doc_obs != null)
 					doc_obs.disconnect();
 					let chldn = Array.from(node.children);
 					for (let ch of chldn) { b_emo[map.get(ch)] = true; }
@@ -2451,12 +2453,12 @@ async function start(cfg, url)
 					focalAnchors.toggleAnchorsByRef(node, true);
 					//node.innerHTML = srt;
 					b_emo[node_count] = true;
-					if (typeof doc_obs != 'undefined' && doc_obs != null)
+					if (doc_obs != undefined && doc_obs != null)
 						doc_obs.observe(document.body, { childList: true, subtree: true });
 					}
 				}
 				}
-				if (/\b(INPUT|TEXTAREA|SELECT|BUTTON)/i.test(tag) && b_dim[node_count] != true) {
+				if (/\b(INPUT|TEXTAREA|SELECT)/i.test(tag) && b_dim[node_count] != true) {
 					b_dim[node_count] = true;
 					if (!is_xinput) {
 					if (node.textContent != null && node.textContent != '' && style.getPropertyValue('width') != null && style.getPropertyValue('width') != '') {
@@ -2469,7 +2471,7 @@ async function start(cfg, url)
 					if (nsty.length > 0 && !cfg.skipHeights)
 						node.setAttribute('style', nsty);
 					}
-					if (!node.disabled && cfg.strength % 2 == 1 && (/(TEXTAREA|TEXT)/i.test(tag) || is_oinput)) {
+					if (!node.disabled && cfg.strength % 2 == 1 && (/(SELECT|TEXTAREA|TEXT)/i.test(tag) || is_oinput)) {
 					let txtcolor = style.color;
 					if (txtcolor == null || txtcolor.length < 1) txtcolor = 'rgb(0,0,0)';
 					let txt_brt = calcBrightness(getRGBarr(txtcolor));
@@ -2477,12 +2479,17 @@ async function start(cfg, url)
 						txtcolor = '#fff';
 					else
 						txtcolor = '#000';
-					node.style.setProperty('color',txtcolor,'important');
-					if (cfg.forcePlhdr && cfg.forceIInv)
-						node.style.setProperty('filter','unset','important');
+					if (txtcolor != style.color) {
+						node.style.setProperty('color',txtcolor,'important');
+						b_cdone[node_count] = true;
+						if (cfg.forcePlhdr && cfg.forceIInv)
+							node.style.setProperty('filter','unset','important');
+					}
 					}
 					nsty = node.getAttribute('style');
 					if (nsty == null) nsty = '';
+					if (cfg.advDimming)
+						node.style.setProperty('filter','revert','important');
 					}
 				}
 			}
@@ -2552,6 +2559,7 @@ async function start(cfg, url)
 					return;
 			}
 
+			if (b_cdone[node_count] != true)
 			if (!cfg.ssrules) {
 			if (bg_brt > bg_threshold)
 			if (!cfg.forcePlhdr) {
@@ -2601,64 +2609,35 @@ async function start(cfg, url)
 			} else if (cfg.ssrules) {
 			let bg_brt2 = bg_brt;
 			if (bg_brt == 256) bg_brt = 0;
-			let fg_thresh = Math.abs(bg_brt - cfg.strength);
+			let fg_255 = 255 - fg_brt;
+			let bstl = '';
 			if (bg_brt > bg_threshold)
 			if (!cfg.forcePlhdr) {
-				let bstl = '';
-				if (Math.abs(bg_brt-fg_brt) < 225) {
-					if (fg_brt > bg_brt)
-						bstl = '#fff';
-					else
-						bstl = '#000';
-				if (bstl == '#000')
-					fg_brt = 0;
-				else if (bstl == '#fff')
-					fg_brt = 255;
-				if (Math.abs(fg_brt - bg_brt) < 27) {
-					if (fg_brt > bg_brt)
-						bstl = '#000';
-					else
-						bstl = '#fff';
-				}
+				let fg_bg = Math.abs(bg_brt - fg_brt);
+				if (fg_brt < fg_bg)
+					bstl = '#000';
+				if (255-bg_brt > fg_bg)
+					bstl = '#fff';
 				if (bstl)
 					node.style.setProperty('color',bstl,'important');
-				}
 			} else if (cfg.forcePlhdr) {
-				let bstl = '';
-			fg_thresh = Math.abs(bg_brt2 - cfg.strength);
-				if (Math.abs(bg_brt2-fg_brt) < 225) {
-					if (!nodes_behind_inv.includes(node)) {
-						if (fg_brt > fg_thresh)
-							bstl = '#fff';
-						else
-							bstl = '#000';
-					} else {
-						if (fg_brt > fg_thresh)
-							bstl = '#000';
-						else
-							bstl = '#fff';
-					}
-				if (bstl == '#000')
-					fg_brt = 0;
-				else if (bstl == '#fff')
-					fg_brt = 255;
-				if (Math.abs(fg_brt - bg_brt2) < 27) {
-					if (!nodes_behind_inv.includes(node)) {
-						if (fg_brt > fg_thresh)
-							bstl = '#000';
-						else
-							bstl = '#fff';
-					} else {
-						if (fg_brt > fg_thresh)
-							bstl = '#fff';
-						else
-							bstl = '#000';
-					}
+				let fg_bg = Math.abs(bg_brt2 - fg_brt);
+				let inv = nodes_behind_inv.includes(node);
+				if (fg_brt < fg_bg) {
+					if (!inv)
+						bstl = '#000';
+					else
+						bstl = '#fff';
+				}
+				if (fg_255 > fg_bg) {
+					if (!inv)
+						bstl = '#000';
+					else
+						bstl = '#fff';
 				}
 				if (bstl)
 					node.style.setProperty('color',bstl,'important');
 				}
-			}
 			}
 		};
 
@@ -2685,6 +2664,9 @@ async function start(cfg, url)
 		}
 
 		iterateBigArr(nodes);
+
+		if (cfg.advDimming)
+			document.body.style.setProperty('filter','unset','important');
 	}
 
 	await process(nodes);
@@ -2713,7 +2695,7 @@ async function start(cfg, url)
 		}
 	};
 
-	if (typeof doc_obs != 'undefined' && doc_obs != null) {
+	if (doc_obs != undefined && doc_obs != null) {
 		doc_obs.observe(document.body, { childList: true, subtree: true });
 	} else {
 		doc_obs = new MutationObserver(observer);
