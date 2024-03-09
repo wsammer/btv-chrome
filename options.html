@@ -36,8 +36,7 @@
 				<label for="advDimming">For Dark mode</label>
 				<div class="help-tip">
 					<p>
-					Increases text contrast in a dark theme or dark background.
-					<br>e.g. Light grey turns whiter. Colorful text can be made more / less colorful.
+					Allows changing brightness and contrast of dark theme.<br>
 					<br>The effect can be adjusted with the Contrast and Brightness sliders.
 					</p>
 				</div>
@@ -53,12 +52,11 @@
 				<div class="help-tip">
 					<p>
 					Determines the contrast percentage of text in Dark mode or Reverse colors.<br>
-					46% equals normal contrast in Dark mode.<br>
-					50 is 100% contrast in Reverse Colors.
+					100% contrast is normal / default.
 					</p>
 				</div>
 				<span class ="sliderLabel" id = "brt-label"></span>
-				<input type = "range" min = "0" max = "350" value = "50" class="slider" id = "brt-slider">
+				<input type = "range" min = "-150" max = "300" value = "50" class="slider" id = "brt-slider">
 			</div>
 
 			<div class ="settings">
@@ -67,7 +65,7 @@
 				<div class="help-tip">
 					<p>
 					Determines the brightness of text and some background in Dark mode or Reverse colors.<br>
-					0% equals normal brightness.<br>
+					100% equals normal / default brightness.<br>
 					</p>
 				</div>
 				<span class ="sliderLabel" id = "con-label"></span>
@@ -78,11 +76,11 @@
 				<label>Strength</label>
 				<div class="help-tip">
 					<p>
-					Adjusts the contrast of text color.
-					<br>If the text becomes white against dark backgrounds, try lowering this value. Reverse for black on bright background.<br/>Also sets the Brightness % in Dark mode, with 0 being normal brightness.<br>
-					If strength is more than 200, most colors are made black on light background or white on dark background.<br>
-					If strength is ODD number, INPUT text boxes color is changed to maximum contrast white/black.<br>
-					In Dark mode or Reverse colors, this value (within -200 to 200 for reverse colors and -300 to 300 for Dark mode) determines "brightness" of text / backgrounds.<br>
+					1. Adjusts the contrast of text color.<br>
+					2. Sets the zoom % of "Shift + zoom".<br>
+					3. If ODD value, sets the high contrast color of input textboxes.<br>
+					<br>If the text contrast is very high or to get original colors, decrease this to high negative values.<br>For getting high(est) contrast, increase this to high positive value 100 to 300.<br>
+					If strength is ODD number, input textboxes color is changed to maximum contrast white/black.<br>
 					</p>
 				</div>
 
@@ -97,7 +95,8 @@
 			<div class="help-tip">
 				<p>
 				Increases font size. Fonts above the size threshold won't be affected.
-				<br>Preset value is at 14% 
+				<br>Increase in width of "SECTION" and "NAV" elements depends on font increase % unless "Skip NAV & SECTION" is enabled.
+				<br>Preset value is at 14%
 				<br>
 				</p>
 			</div>
@@ -126,6 +125,8 @@
 				<div class="help-tip">
 					<p>
 					Changes the font weight of all text to specifed slider value (400 is normal). 100 is thinnest and 900 is boldest text.
+					<br>Changes the "inverse text size" calculation to "normal text increase" when "Start 3" disabled and "Skip links" enabled.
+					<br>400 is default "inverse text size increase" and decreases as weight value is decreased to 300 .. 100 .. 900 .. 500, with 500 being "normal text size increase" which is closest to normal website.
 					</p>
 				</div>
 
@@ -138,8 +139,7 @@
 
 				<div class="help-tip">
 					<p>
-					Attempts to avoid colorful text and links, if they are having low contrast and brightness.
-					<br>Can be adjusted with "Strength".
+					Attempts to avoid colorful text and links.
 					</p>
 				</div>
 
@@ -154,7 +154,7 @@
 
 				<div class="help-tip">
 					<p>
-					Skips applying setting to HTML headings. (&lth1&gt, &lth2&gt, &lth3&gt, &lth4&gt)
+					Skips applying changes to HTML headings. (&lth1&gt, &lth2&gt, &lth3&gt, &lth4&gt)
 					</p>
 				</div>
 
@@ -171,7 +171,6 @@
 					Skips widening of SECTION and increasing height of NAV elements.<br>
 					NAV elements are usually in menus and SECTION in a big part of webpage<br>
 					If "Force Reverse Colors" is enabled, images within NAV and HEADER parts of page are skipped.<br>
-					( This only applies if "Invert Image colors" is enabled ).<br>
 				</p>
 				</div>
 
@@ -185,8 +184,8 @@
 
 				<div class="help-tip">
 				<p>
-					Skips increasing height of text whose height is less than font size, and unset line height of changed text.<br>
-					Enable this if there is height between text lines is increased.
+					Skips increasing height of text whose size is less than font threshold, and unset line height of changed text.<br>
+					Also skips increase of width and height input textboxes.
 				</p>
 				</div>
 
@@ -200,8 +199,7 @@
 
 				<div class="help-tip">
 				<p>
-					Skips applying settings on white text.<br>
-					White text is usually behind images, where determining the background color is not always possible.<br>
+					Skips applying settings on white text whose value in RGB is (255, 255, 255) or (254, 254, 254) and (253, 253, 253).<br>
 				</p>
 				</div>
 
@@ -215,8 +213,10 @@
 
 				<div class="help-tip">
 				<p>
-					Skips preserving image colors in Dark mode<br>
-					With changed brightness / contrast settings in Dark mode, gives 'high contrast' effect to some parts of page.<br>
+					1. Skips preserving image colors in Dark mode.<br>
+					2. Text contrast method is changed to old / new if disabled / enabled.<br>
+					When enabled in Dark mode, gives 'high contrast' effect to some parts of page.<br>
+					Sets the high contrast text method to new method or old. Enable this if text is not high contrast even with any value of "Strength".<br>
 				</p>
 				</div>
 
@@ -245,6 +245,7 @@
 				<div class="help-tip">
 				<p>
 					Makes start 3 letters bold of all words on page.
+					<br>Along with "Skip links", it also enables / disables "inverse text size" and input elements width / height increase.
 				</p>
 				</div>
 
@@ -259,6 +260,7 @@
 				<div class="help-tip">
 				<p>
 					Avoid changing webpage links when start 3 letters bold is enabled.
+					<br>Along with "Skip links", it also enables / disables "inverse text size" and input elements width / height increase.
 				</p>
 				</div>
 
@@ -317,7 +319,7 @@
 
 				<div class="help-tip">
 					<p>
-					Changes colors of text and some backgrounds to match original website in reverse colors.<br>
+					 In reverse colors, changes colors of text and some backgrounds to somewhat same as original website.<br>
 					</p>
 				</div>
 
@@ -347,7 +349,8 @@
 
 				<div class="help-tip">
 					<p>
-					Some websites use dark fonts that still look grey because of low opacity. This option forces full opacity on all text.<br><br>Disable this on websites that use opacity to hide some elements (e.g. YouTube).<br>Also forces background color of page to reverse color when "Force Reverse Colors" is enabled and the background color is not "reversed".
+					If any text is having transparency, makes the text fully opaque.
+					<br>Also forces background color of BODY element to reverse color when "Reverse Colors" is enabled and the background color is not "reversed".<br>
 					</p>
 				</div>
 
@@ -363,7 +366,7 @@
 				<div class="help-tip">
 					<p>
 					Change text colors to make them readable for colorblind condition.<br>
-					Adjusts red / green / blue values of color to exchange with blue or green value, depending on reverse colors or dark mode is enabled or disabled.
+					Adjusts red / green / blue values of color to exchange with blue or green value, depending on reverse colors is enabled or disabled.
 					</p>
 				</div>
 
@@ -379,6 +382,7 @@
 				<div class="help-tip">
 					<p>
 					Adds a black outline around input areas.<br>
+					When enabled with "Start 3" disabled and "Skip links" enabled, prevents changes of width / height of input text elements and does not add border.
 					</p>
 				</div>
 
