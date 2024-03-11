@@ -38,6 +38,7 @@ let skipNavSection  = doc.querySelector('#skipNavSection');
 let skipHeights     = doc.querySelector('#skipHeights');
 let underlineLinks  = doc.querySelector('#underlineLinks');
 let input_border    = doc.querySelector('#input-border');
+let global_css      = doc.querySelector('#global-css');
 
 // Whitelist
 let WLtable         = doc.querySelector('#whitelist');
@@ -153,7 +154,7 @@ function init()
 {
 	addListeners();
 
-	chrome.storage.local.get(['globalStr', 'size', 'weight', 'sizeThreshold','brightness', 'contrast'], items => {
+	chrome.storage.local.get(['globalStr', 'size', 'weight', 'sizeThreshold','brightness', 'contrast', 'globalCss'], items => {
 		if (typeof strSlider != 'undefined' && strSlider != null && typeof strSlider.value != 'undefined')
 			strSlider.value       = items.globalStr;
 		if (typeof strLabel != 'undefined' && strLabel != null && typeof strLabel.innerText != 'undefined')
@@ -178,6 +179,8 @@ function init()
 			con_slider.value      = items.contrast;
 		if (typeof con_label != 'undefined' && con_label != null && typeof con_label.innerText != 'undefined')
 			con_label.innerText   = (parseInt(items.contrast)+100);
+		if (typeof global_css != 'undefined' && global_css != null && typeof global_css.innerText != 'undefined')
+			global_css.value      = items.globalCss == undefined ? '' : items.globalCss;
 	});
 
 	let checks = [
@@ -437,6 +440,7 @@ function addListeners()
 			skipHeights:    skipHeights.checked,
 			underlineLinks: underlineLinks.checked,
 			input_border:   input_border.checked,
+			globalCss:      global_css.value,
 			presetNumber:   0
 			};
 		let idx = wl.findIndex(o => o.url === "#reset0p");
@@ -529,6 +533,7 @@ function addListeners()
 		skipHeights.onclick();
 		underlineLinks.checked   = item.underlineLinks;
 		underlineLinks.onclick();
+		global_css.value         = item.globalCss;
 		}
 
 		});
@@ -647,6 +652,12 @@ function addListeners()
 	threshSlider.onchange = () => {
 		chrome.storage.local.set({"sizeThreshold": threshSlider.value});
 	};
+	}
+
+	if (global_css !== null) {
+	global_css.onchange = () => {
+    		chrome.storage.local.set({"globalCss": global_css.value});
+	}
 	}
 }
 

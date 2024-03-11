@@ -315,6 +315,14 @@ let m_bcol = new Map();
 let m_bocol = new Map();
 let g_mag = '';
 let g_fntRule = false;
+var g_globalCss;
+var g_bg_contrast;
+var g_bg_contrast_old;
+var g_fg_brightness_min;
+var g_min_colorfulness;
+var g_bg_threshold;
+var g_bg_threshold_new;
+var g_bg_threshold_new_default;
 
 const focalAnchors = {};
 focalAnchors.attrNameContainer = 'f-a-h';
@@ -783,7 +791,6 @@ function getBgBrightness(parnt, bg_color)
 	return bg_luma;
 }
 
-
 function getCSS(cfg) {
 
 	const attr = '[d__],[d__][style]';
@@ -902,7 +909,11 @@ function getCSS(cfg) {
 	str_style = `brightness(${brght}) contrast(${ctrst})`;
 	str_style2 = '1';
 
-	return `${bold}${size_inc}${g_mag}${form_border}${underline}${cust}`;
+	g_globalCss = '';
+	if (cfg.globalCss != undefined && cfg.globalCss)
+		g_globalCss = cfg.globalCss;
+
+	return `${bold}${size_inc}${g_mag}${form_border}${underline}${g_globalCss}${cust}`;
 }
 
 function createElem()
@@ -962,7 +973,8 @@ async function init()
 		'fontFamily',
 		'fontFamilyName',
 		'customCss',
-		'customCssText'
+		'customCssText',
+		'globalCss'
 	];
 
 	let cfg = await new Promise(res => chrome.storage.local.get(stored, res));
@@ -987,6 +999,7 @@ async function init()
 	let wl  = cfg.whitelist || [];
 	idx = wl.findIndex(x => x.url === url);
 
+	let g_css = cfg.globalCss;
 	if (idx > -1) {
 		cfg = wl[idx];
 	} else if (!cfg.enableEverywhere) {
@@ -994,7 +1007,7 @@ async function init()
 		cnode.remove();
 		return;
 	}
-
+	cfg.globalCss = g_css;
 	t_start = Date.now();
 
 	start(cfg, url);
@@ -1141,6 +1154,48 @@ async function start(cfg, url)
 	css_node.nodeValue += style_rule;
 
 	style_node.appendChild(css_node);
+
+	if ((cfg.customCss && cfg.customCssText) || g_globalCss) {
+
+	let docs = getComputedStyle(document.documentElement);
+
+	g_bg_contrast_old = docs.getPropertyValue('--g_bg_contrast_old');
+	if (!g_bg_contrast_old || g_bg_contrast_old == undefined)
+		g_bg_contrast_old = 19;
+
+	g_bg_contrast = docs.getPropertyValue('--g_bg_contrast');
+	if (!g_bg_contrast || g_bg_contrast == undefined)
+		g_bg_contrast = 27;
+
+	g_fg_brightness_min = docs.getPropertyValue('--g_fg_brightness_min');
+	if (!g_fg_brightness_min || g_fg_brightness_min == undefined)
+		g_fg_brightness_min = 90;
+
+	g_min_colorfulness = docs.getPropertyValue('--g_min_colorfulness');
+	if (!g_min_colorfulness || g_min_colorfulness == undefined)
+		g_min_colorfulness = 41;
+
+	g_bg_threshold = docs.getPropertyValue('--g_bg_threshold');
+	if (!g_bg_threshold || g_bg_threshold == undefined)
+		g_bg_threshold = 160;
+
+	g_bg_threshold_new = docs.getPropertyValue('--g_bg_threshold_new');
+	if (!g_bg_threshold_new || g_bg_threshold_new == undefined)
+		g_bg_threshold_new = 50;
+
+	g_bg_threshold_new_default = docs.getPropertyValue('--g_bg_threshold_new_default');
+	if (!g_bg_threshold_new_default || g_bg_threshold_new_default == undefined)
+		g_bg_threshold_new_default = 150;
+
+	} else {
+		g_bg_contrast_old = 19;
+		g_bg_contrast = 27;
+		g_fg_brightness_min = 90;
+		g_min_colorfulness = 41;
+		g_bg_threshold = 160;
+		g_bg_threshold_new = 50;
+		g_bg_threshold_new_default = 150;
+	}
 
 	var doc = document;
 /**		if (!cfg.ssrules) {
@@ -1805,7 +1860,6 @@ async function start(cfg, url)
 				if (e.target) return e.target;
 				else if (e.srcElement) return e.srcElement;
 			}
-
 
 	const process = async (nodes, mutation = false) =>
 	{
@@ -2564,21 +2618,21 @@ async function start(cfg, url)
 
 			let bg_brt          = calcBrightness(getRGBarr(bg_color));
 
-			let bg_threshold    = 160 - cfg.strength; // + img_offset;
+			let bg_threshold    = g_bg_threshold - cfg.strength; // + img_offset;
 
-			let contrast          = color == bg_color ? fg_brt :  Math.abs(bg_brt - fg_brt);
+			let contrast        = color == bg_color ? fg_brt :  Math.abs(bg_brt - fg_brt);
 
 			if (cfg.ssrules)
 				if (cfg.strength == 0)
-					bg_threshold = 150;
+					bg_threshold = g_bg_threshold_new_default;
 				else
-					bg_threshold = 50 - cfg.strength;
+					bg_threshold = g_bg_threshold_new - cfg.strength;
 
 			if (cfg.skipColoreds) {
 				let fg_colorfulness   = calcColorfulness(rgba_arr);
 				let min_contrast      = cfg.strength / 3;
 				let min_link_contrast = min_contrast;
-				let min_colorfulness  = 41;
+				let min_colorfulness  = g_min_colorfulness;
 
 				if (is_link)
 					min_contrast = min_link_contrast;
@@ -2597,9 +2651,9 @@ async function start(cfg, url)
 			if (bg_brt > bg_threshold)
 			if (!cfg.forcePlhdr) {
 				let bstl = '';
-				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > 19) {
+				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
-				} else if (bg_brt >= 0 && bg_brt <= 176 && fg_brt > 176 && 255-bg_brt > 19) {
+				} else if (bg_brt >= 0 && bg_brt <= 176 && fg_brt > 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
 				} else if (bg_brt > 176 && bg_brt <= 255 && fg_brt <= 176) {
 					bstl = 'black';
@@ -2612,9 +2666,9 @@ async function start(cfg, url)
 				node.style.setProperty('color',bstl,'important'); }
 			} else if (cfg.forcePlhdr) {
 				let bstl = '';
-				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > 19) {
+				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
-				} else if (bg_brt >= 0 && bg_brt <= 176 && fg_brt > 176 && 255-bg_brt > 19) {
+				} else if (bg_brt >= 0 && bg_brt <= 176 && fg_brt > 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
 				} else if (bg_brt > 176 && bg_brt <= 255 && fg_brt <= 176) {
 					bstl = 'black';
@@ -2627,9 +2681,9 @@ async function start(cfg, url)
 				node.style.setProperty('color',bstl,'important'); }
 			} else {
 				let bstl = '';
-				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > 19) {
+				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
-				} else if (fg_brt > 176 && 255-bg_brt > 19) {
+				} else if (fg_brt > 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
 				} else if (bg_brt == 256 && fg_brt > 176) {
 					bstl = 'white';
@@ -2647,16 +2701,16 @@ async function start(cfg, url)
 			if (!cfg.forcePlhdr) {
 				if (fg_brt/255 < str/300.0)
 					bstl = '#000';
-				else if (bg_brt < 27)
+				else if (bg_brt < g_bg_contrast)
 					bstl = '#fff';
-				if (255-bg_brt > contrast && !bg_transp)
+				if (255-bg_brt > contrast && fg_brt > g_fg_brightness_min && !bg_transp)
 					if (bstl == '#000')
 						bstl = '#fff';
 				node.style.setProperty('color',bstl,'important');
 			} else if (cfg.forcePlhdr) {
 				if (fg_brt/255 < str/300.0)
 					bstl = '#000';
-				else if (bg_brt < 27)
+				else if (bg_brt < g_bg_contrast)
 					bstl = '#fff';
 				if (nodes_behind_inv.includes(node))
 					if (bstl == '#000')
