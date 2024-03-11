@@ -89,13 +89,8 @@ button.remove
 }
 textarea {
     width: 100%;
-    resize: none; 
     font-family: Basic, sans-serif; 
-    font-style: italic; 
-    font-size: 1.7em;
-    border: 0.32vw solid black;
-    border-radius: 0.15em;
-    white-space: nowrap;
+    font-size: 1.2em;
     color:black;
     background-color:white;
 }
