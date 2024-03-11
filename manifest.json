@@ -1,7 +1,7 @@
 {
   "name": "Better Text View",
   "description": "Makes webpage text larger and readable.",
-  "version": "4.0.4",
+  "version": "4.0.6",
   "author": "Sammer",
   "permissions": [
    "tabs",
