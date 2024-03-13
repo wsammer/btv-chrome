@@ -69,7 +69,6 @@ function addRow(item, is_wl)
 		list_name = 'whitelist';
 		table = WLtbody;
 		g_list = wl;
-		console.log('                len = '+wl.length);
 	} else {
 		list = bl;
 		list_name = 'blacklist';
@@ -671,7 +670,6 @@ function saveURL(is_wl)
 		list = wl;
 		list_name = 'whitelist';
 		textarea = WLtextarea;
-		console.log('len = '+wl.length);
 	} else {
 		list = bl;
 		list_name = 'blacklist';

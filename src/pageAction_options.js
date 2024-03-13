@@ -81,9 +81,11 @@ function init(tabs)
 
 	url_text.innerText = hostname;
 
+	if (hostname == undefined) hostname = '';
+
 	strSlider.oninput = () => {
 		strLabel.innerText = strSlider.value;
-		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2), afont: fontFamilyName.value } );
+		chrome.storage.local.set( { url:hostname, abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2), afont: fontFamilyName.value } );
 		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
 	}
 
@@ -91,12 +93,12 @@ function init(tabs)
 	thresholdSlider.oninput = () => { thresholdLabel.innerText = thresholdSlider.value; if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); } }
 	brt_slider.oninput = () => {
 		brt_label.innerText = (parseInt(brt_slider.value)+50);
-		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2), afont: fontFamilyName.value } );
+		chrome.storage.local.set( { url:hostname, abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2), afont: fontFamilyName.value } );
 		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
 	}
 	con_slider.oninput = () => {
 		con_label.innerText = (parseInt(con_slider.value)+100);
-		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2), afont: fontFamilyName.value } );
+		chrome.storage.local.set( { url:hostname, abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value/100)).toFixed(2), afont: fontFamilyName.value } );
 		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
 	}
 			
@@ -112,12 +114,12 @@ function init(tabs)
 	};
 
 	fontFamily.onchange = () =>  {
-		chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value)/100).toFixed(2), afont: fontFamilyName.value } );
+		chrome.storage.local.set( { url:hostname, abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value)/100).toFixed(2), afont: fontFamilyName.value } );
 		if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
 	}
 	fontFamilyName.onkeydown = (e) => {
 		if (e.keyCode == 13) {
-			chrome.storage.local.set( { abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value)/100).toFixed(2), afont: fontFamilyName.value } );
+			chrome.storage.local.set( { url:hostname, abrightness:  (parseInt(con_slider.value)+100)+'%', acontrast:  (parseInt(brt_slider.value)+50)+'%', azoom: Math.abs(parseFloat(strSlider.value)/100).toFixed(2), afont: fontFamilyName.value } );
 			if (!WLcheck.checked) { WLcheck.click(); } else { WLcheck.click();WLcheck.click(); }
 		}
 	}
