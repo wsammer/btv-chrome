@@ -212,19 +212,20 @@ function clamp(x, min, max) {
 	return Math.min(max, Math.max(min, x));
 }
 
-let m_gcol_cache = {};
-function applyColorMatrix([r, g, b], url) {
+let gcol_cache = new Map();
+function applyColorMatrix([r, g, b]) {
 	let col = [r,g,b];
-	if (m_gcol_cache[url].get(col) != undefined)
-		return m_gcol_cache[url].get(col);
+	if (gcol_cache.get(col) != undefined)
+		return gcol_cache.get(col);
 //	const rgb = [[r / 255], [g / 255], [b / 255], [1], [1]];
 	const rgb = [r / 255, g / 255, b / 255, 1, 1];
-	const result = [  rgb[0]*m_g_m[url][0][0]+rgb[1]*m_g_m[url][0][1]+rgb[2]*m_g_m[url][0][2]+rgb[3]*m_g_m[url][0][3]+rgb[4]*m_g_m[url][0][4]  ,  rgb[0]*m_g_m[url][1][0]+rgb[1]*m_g_m[url][1][1]+rgb[2]*m_g_m[url][1][2]+rgb[3]*m_g_m[url][1][3]+rgb[4]*m_g_m[url][1][4]  ,  rgb[0]*m_g_m[url][2][0]+rgb[1]*m_g_m[url][2][1]+rgb[2]*m_g_m[url][2][2]+rgb[3]*m_g_m[url][2][3]+rgb[4]*m_g_m[url][2][4]  ];
+	const result = [  rgb[0]*g_m[0][0]+rgb[1]*g_m[0][1]+rgb[2]*g_m[0][2]+rgb[3]*g_m[0][3]+rgb[4]*g_m[0][4]  ,  rgb[0]*g_m[1][0]+rgb[1]*g_m[1][1]+rgb[2]*g_m[1][2]+rgb[3]*g_m[1][3]+rgb[4]*g_m[1][4]  ,  rgb[0]*g_m[2][0]+rgb[1]*g_m[2][1]+rgb[2]*g_m[2][2]+rgb[3]*g_m[2][3]+rgb[4]*g_m[2][4]  ];
 //	const result = multiplyMatrices(g_m, rgb);
-	const x = [0, 1, 2].map((i) => clamp(Math.round(result[i] * 255), 0, 255));
+	const x = [0, 1, 2].map((i) =>
+	clamp(Math.round(result[i] * 255), 0, 255));
 //	const x = [ Math.round(result[0]*255), Math.round(result[1]*255), Math.round(result[2]*255) ];
-	if (m_gcol_cache[url].get(col) == undefined)
-		m_gcol_cache[url].set(col, x);
+	if (gcol_cache.get(col) == undefined)
+		gcol_cache.set(col, x);
 	return x;
 }
 
@@ -283,43 +284,41 @@ function multiplyMatrices(m1, m2) {
 	return result;
 }
 
-let g_url = window.location.hostname || window.location.href;
-g_url = g_url.trim();
+let g_brightness = 1.00;
+let g_contrast = 1.00;
 
-var m_g_m = {};
-var m_g_m2 = {};
-var m_g_brightness = {};
-var m_g_contrast = {};
+var g_m2;
+let g_m = Matrix.invertNHue();
 
+var style_node;
+var css_node;
+var doc_obs;
+let b_html = false;
+let f_sizes = [];
+let f2_sizes = [];
+let h_sizes = [];
+let b_body = false;
+let g_eng = false;
+var str_style;
+var str_style2 = '1';
+var t_start, t_end;
+var root_style;
 let g_nokinput = /(checkbox|color|hidden|submit|image|radio|range)/i;
 let g_okinput = /(text|number|email|password|date|time|week|month|url|tel|search|select)/i;
-var m_style_node = {};
-var m_css_node = {};
-var m_doc_obs = {};
-let m_b_html = {};
-let m_f_sizes = {};
-let m_f2_sizes = {};
-let m_h_sizes = {};
-let m_b_body = {};
-let m_eng = {};
-var m_str_style = {};
-var m_str_style2 = {};
-var m_t_start = {}, m_t_end = {};
-var m_root_style = {};
-let m_m_fcol = {};
-let m_m_bcol = {};
-let m_m_bocol = {};
-let m_g_mag = {};
-let m_g_fntRule = {};
-let m_g_fontName = {};
-var m_g_globalCss = {};
-var m_g_bg_contrast = {};
-var m_g_bg_contrast_old = {};
-var m_g_fg_brightness_min = {};
-var m_g_min_colorfulness = {};
-var m_g_bg_threshold = {};
-var m_g_bg_threshold_new = {};
-var m_g_bg_threshold_new_default = {};
+let m_fcol = new Map();
+let m_bcol = new Map();
+let m_bocol = new Map();
+let g_mag = '';
+let g_fntRule = false;
+var g_globalCss;
+var g_bg_contrast;
+var g_bg_contrast_old;
+var g_fg_brightness_min;
+var g_min_colorfulness;
+var g_bg_threshold;
+var g_bg_threshold_new;
+var g_bg_threshold_new_default;
+var g_url;
 
 const focalAnchors = {};
 focalAnchors.attrNameContainer = 'f-a-h';
@@ -406,8 +405,7 @@ focalAnchors.injectAnchorText = function (node,weight) {
 	var tag = '';
 	var wt = parseInt(weight)+400;
 	if (node.parentNode) tag = node.parentNode.nodeName;
-	var eng = /^en/i.test(document.documentElement.lang);
-	if (eng) {
+	if (g_eng) {
 	let words = txtc.split(/\b/);
 	const spann = document.createElement('span');
 	for (let wordID = 0; wordID < words.length; wordID++) {
@@ -587,7 +585,7 @@ function getVarValue(va) {
 	var b = '';
 	if (/var\(/i.test(va)) {
 		b = va.replace(/var\((.*?)\)/i, `$1`);
-		return m_root_style[g_url].getPropertyValue(b);
+		return root_style.getPropertyValue(b);
 	} else {
 		return '';
 	}
@@ -791,7 +789,7 @@ function getBgBrightness(parnt, bg_color)
 	return bg_luma;
 }
 
-function getCSS(cfg, url) {
+function getCSS(cfg) {
 
 	const attr = '[d__],[d__][style]';
 	let color_black = 'color:black!important;';
@@ -835,23 +833,19 @@ function getCSS(cfg, url) {
 		form_border = '[b__]{border:1px solid black!important}';
 
 	if (cfg.forcePlhdr && (cfg.contrast != 0 || cfg.brightness != 50)) {
-		m_g_brightness[url] = 1.0+parseInt(cfg.contrast)/100;
-		m_g_contrast[url] = 1.0 + (parseInt(cfg.brightness)-50)/100;
-		document.documentElement.style.setProperty('--g_brightness',parseInt(100*m_g_brightness[url])+'%');
-		document.documentElement.style.setProperty('--g_contrast', parseInt(100*m_g_contrast[url])+'%');
-		m_g_m2[url] = Matrix.identity();
-		m_g_m[url] = multiplyMatrices(m_g_m2[url], Matrix.brightness(m_g_brightness[url]));
-		m_g_m2[url] = multiplyMatrices(m_g_m[url], Matrix.contrast(m_g_contrast[url]));
-		m_g_m[url] = multiplyMatrices(m_g_m2[url], Matrix.invertNHue());
+		g_brightness = 1.0+parseInt(cfg.contrast)/100;
+		g_contrast = 1.0 + (parseInt(cfg.brightness)-50)/100;
+		document.documentElement.style.setProperty('--g_brightness',parseInt(100*g_brightness)+'%');
+		document.documentElement.style.setProperty('--g_contrast', parseInt(100*g_contrast)+'%');
+		g_m = multiplyMatrices(Matrix.identity(), Matrix.brightness(g_brightness));
+		g_m2 = multiplyMatrices(g_m, Matrix.contrast(g_contrast));
+		g_m = multiplyMatrices(g_m2, Matrix.invertNHue());
 	} else if (cfg.forcePlhdr && cfg.contrast == 0 && cfg.brightness == 50) {
-		m_g_brightness[url] = 1.00;
-		m_g_contrast[url] = 1.00;
-		document.documentElement.style.setProperty('--g_brightness',parseInt(100*m_g_brightness[url])+'%');
-		document.documentElement.style.setProperty('--g_contrast', parseInt(100*m_g_contrast[url])+'%');
-		m_g_m2[url] = Matrix.identity();
-		m_g_m[url] = multiplyMatrices(m_g_m2[url], Matrix.brightness(m_g_brightness[url]));
-		m_g_m2[url] = multiplyMatrices(m_g_m[url], Matrix.contrast(m_g_contrast[url]));
-		m_g_m[url] = multiplyMatrices(m_g_m2[url], Matrix.invertNHue());
+		g_brightness = 1.00;
+		g_contrast = 1.00;
+		document.documentElement.style.setProperty('--g_brightness',parseInt(100*g_brightness)+'%');
+		document.documentElement.style.setProperty('--g_contrast', parseInt(100*g_contrast)+'%');
+		g_m = Matrix.invertNHue();
 	}
 
 	let cust = '';
@@ -871,11 +865,7 @@ function getCSS(cfg, url) {
 	if (cfg.strength == 0) n_zoo = 1.75;
 	document.documentElement.style.setProperty('--g_zoom',n_zoo);
 
-	m_g_mag[url] = ".enlarge:hover { position: relative; overflow: visible;-webkit-transform: scale(var(--g_zoom));-moz-transform: scale(var(--g_zoom));-o-transform: scale(var(--g_zoom));-ms-transform: scale(var(--g_zoom));transform: scale(var(--g_zoom));max-width: 100%!important;-webkit-transition: all .2s ease-in-out;-moz-transition: all .2s ease-in-out;-o-transition: all .2s ease-in-out;-ms-transition: all .2s ease-in-out;z-index: 19999;} .enlarge {position: relative; overflow: hidden;z-index: 1000; }";
-
-	m_f_sizes[url] = [];
-	m_f2_sizes[url] = [];
-	m_h_sizes[url] = [];
+	g_mag = ".enlarge:hover { position: relative; overflow: visible;-webkit-transform: scale(var(--g_zoom));-moz-transform: scale(var(--g_zoom));-o-transform: scale(var(--g_zoom));-ms-transform: scale(var(--g_zoom));transform: scale(var(--g_zoom));max-width: 100%!important;-webkit-transition: all .2s ease-in-out;-moz-transition: all .2s ease-in-out;-o-transition: all .2s ease-in-out;-ms-transition: all .2s ease-in-out;z-index: 19999;} .enlarge {position: relative; overflow: hidden;z-index: 1000; }";
 
 	if (cfg.size > 0 && cfg.threshold > 0) {
 		while (c < cfg.threshold) {
@@ -901,92 +891,50 @@ function getCSS(cfg, url) {
 			size_inc += `[h__='${c}']{line-height:1.297!important;min-height: ${height_inc}em!important}`;
 			if (!cfg.skipHeights)
 //				f_sizes[c] = "font-size: calc(" + cc + "px + " + pcent + "%)!important;"+sCaps+"line-height: " + height_inc + "em!important;" + dim + opacity;
-				m_f_sizes[url][c] = "font-size: " + cc2 + "px!important;"+sCaps+"line-height: " + height_inc + "em!important;" + dim + opacity;
+				f_sizes[c] = "font-size: " + cc2 + "px!important;"+sCaps+"line-height: " + height_inc + "em!important;" + dim + opacity;
 			else
-				m_f_sizes[url][c] = "font-size: " + cc2 + "px!important;"+sCaps+ dim + opacity;
+				f_sizes[c] = "font-size: " + cc2 + "px!important;"+sCaps+ dim + opacity;
 //				f_sizes[c] = "font-size: calc(" + cc + "px + " + pcent + "%)!important;"+sCaps+";" + dim + opacity;
-			m_h_sizes[url][c] = `${height_inc}em`;
+			h_sizes[c] = `${height_inc}em`;
 //			f2_sizes[c] = "calc(" + cc + "px + " + pcent + "%)";
-			m_f2_sizes[url][c] = cc2 + "px";
+			f2_sizes[c] = cc2 + "px";
 		}
 	}
-	m_str_style[url] = `brightness(${brght}) contrast(${ctrst})`;
-	m_str_style2[url] = '1';
+	str_style = `brightness(${brght}) contrast(${ctrst})`;
+	str_style2 = '1';
 
-	m_g_globalCss[url] = '';
+	g_globalCss = '';
 	if (cfg.globalCss != undefined && cfg.globalCss)
-		m_g_globalCss[url] = cfg.globalCss;
+		g_globalCss = cfg.globalCss;
 
-	let mag = m_g_mag[url];
-	let gcss = m_g_globalCss[url];
-
-/*	if (cfg.fontFamily) {
-		document.documentElement.style.setProperty('--g_btvfont',cfg.fontFamilyName);
-		m_g_fntRule[url] = true;
-		m_g_fontName[url] = cfg.fontFamilyName.trim();
-	} else {
-		fntFmly = '';
-		document.documentElement.style.setProperty('--g_btvfont','');
-		m_g_fntRule[url] = false;
-		m_g_fontName[url] = '';
-	}*/
-	let fntFmly = `*{font-family:var(--g_btvfont)!important;}`;
-	if (!cfg.fontFamily || !cfg.fontFamilyName.trim()) {
-		let rul = 'var(--g_btvfont)';
-		document.documentElement.style.setProperty('--g_btvfont','');
-/**		if (m_style_node[url].sheet != undefined) {
-		let rl = m_style_node[url].sheet.cssRules;
-		let x = 0;
-		for (x = 0; x < rl.length; x++ )
-			if (rl[x].cssText.indexOf(rul) > -1) break;
-		if (x < rl.length)
-			m_style_node[url].sheet.deleteRule(x);
-		}*/
-		m_g_fontName[url] = '';
-		fntFmly = '';
-	} else {
-		let fntFmly = `*{font-family:var(--g_btvfont)!important;}`;
-		if (cfg.fontFamily) {
-			document.documentElement.style.setProperty('--g_btvfont',cfg.fontFamilyName);
-			m_g_fntRule[url] = true;
-			m_g_fontName[url] = cfg.fontFamilyName.trim();
-		} else {
-			fntFmly = '';
-			document.documentElement.style.setProperty('--g_btvfont','');
-			m_g_fntRule[url] = false;
-			m_g_fontName[url] = '';
-		}
-//		m_style_node[url].sheet.insertRule(fntFmly, 0);
-	}
-
-	return `${fntFmly}${bold}${size_inc}${mag}${form_border}${underline}${gcss}${cust}`;
+	return `${bold}${size_inc}${g_mag}${form_border}${underline}${g_globalCss}${cust}`;
 }
 
-function createElem(url)
+function createElem()
 {
 	let doc = document;
 
-	m_style_node[url] = doc.createElement('style');
-	m_style_node[url].setAttribute('id', '_btv_');
+	style_node = doc.createElement('style');
+	style_node.setAttribute('id', '_btv_');
 	let d_head = doc.head || doc.getElementsByTagName('HEAD')[0];
 	if (d_head != undefined && d_head != null)
-		d_head.appendChild(m_style_node[url]);
+		d_head.appendChild(style_node);
 	else
 		d_head = '';
 
-	m_css_node[url] = doc.createTextNode('');
+	css_node = doc.createTextNode('');
 }
 
 async function init()
 {
 	if (document.getElementById('_btv_')) {
-		if (m_style_node[g_url] != null && m_style_node[g_url] != undefined) {
-			m_style_node[g_url].appendChild(m_css_node[g_url]);
+		if (style_node != null && style_node != undefined) {
+			style_node.appendChild(css_node);
 			return;
 		}
 	}
 
-	createElem(g_url);
+	createElem();
 
 	let stored = [
 		'enableEverywhere',
@@ -1029,28 +977,15 @@ async function init()
 	cfg.threshold = cfg.sizeThreshold;
 
 	let url = window.location.hostname || window.location.href;
-	url = url.trim();
-	g_url = url;
-
-	m_m_fcol[url] = new Map();
-	m_m_bcol[url] = new Map();
-	m_m_bocol[url] = new Map();
-	m_b_body[url] = false;
-
-	m_g_brightness[url] = 1.00;
-	m_g_contrast[url] = 1.00;
-	m_g_m2[url] = Matrix.identity();
-	m_g_m[url] = multiplyMatrices(m_g_m2[url], Matrix.brightness(m_g_brightness[url]));
-	m_g_m2[url] = multiplyMatrices(m_g_m[url], Matrix.contrast(m_g_contrast[url]));
-	m_g_m[url] = multiplyMatrices(m_g_m2[url], Matrix.invertNHue());
+	g_url = url.trim();
 
 	let bl  = cfg.blacklist || [];
 	let idx = bl.findIndex(x => x.url === url);
 
 	if (idx > -1) {
 		let cnode = document.getElementById("_btv_");
-		if (m_style_node[url].hasChildNodes()) {
-			m_style_node[url].removeChild(cnode);
+		if (style_node.hasChildNodes()) {
+			style_node.removeChild(cnode);
 		}
 		cnode.remove();
 		return;
@@ -1068,17 +1003,14 @@ async function init()
 		return;
 	}
 	cfg.globalCss = g_css;
-	m_t_start[url] = Date.now();
+	t_start = Date.now();
 
-	start(cfg, url);
+	start(cfg);
 }
 
 async function start(cfg, url)
 {
-	m_css_node[url].nodeValue = getCSS(cfg, url);
-
-	m_gcol_cache[url] = new Map();
-	g_url = url;
+	css_node.nodeValue = getCSS(cfg);
 
 /**	for (let s of document.getElementsByTagName('STYLE')) {
 		css_node.nodeValue += s.innerHTML;
@@ -1150,17 +1082,22 @@ async function start(cfg, url)
 	let n_imgcount = 0;
 	let b_csp = true;
 	let b_forced = false;
-	var lang = document.documentElement.lang;
-	m_root_style[url] = getComputedStyle(document.documentElement);
-	let rootsty = m_root_style[url];
+	root_style = getComputedStyle(document.documentElement);
+	let rootsty = root_style;
 	let browser_sfz = 'px';
 	if (rootsty.fontSize && /\d.*?px/i.test(rootsty.fontSize))
 		browser_sfz = rootsty.fontSize;
-	m_eng[url] = false;
-	if (lang == null || lang.length == 0)
-		m_eng[url] = true;
-	else if (/^en/i.test(lang))
-		m_eng[url] = true;
+	g_eng = false;
+	var lang;
+	if (cfg.start3 || cfg.makeCaps) {
+		lang = document.documentElement.lang;
+		if (lang == null || lang.length == 0)
+			g_eng = true;
+		else if (/^en/i.test(lang))
+			g_eng = true;
+	} else {
+		g_eng = true;
+	}
 	let rootcolor       =  getRGBarr(rootsty.backgroundColor);
 	let bodycolor       =  getRGBarr(getComputedStyle(document.body).backgroundColor)
 	if (rootcolor != '' && bodycolor != '') {
@@ -1173,9 +1110,9 @@ async function start(cfg, url)
 	if (cfg.forcePlhdr || cfg.advDimming)
 	if (finalLightness < 0.5)  {
 		if (cfg.advDimming && cfg.forcePlhdr) {
-			var cs = m_css_node[url].nodeValue;
+			var cs = css_node.nodeValue;
 			var rcs = cs.replaceAll(/filter.*?brightness.*?contrast.*?important\;/mg,'');
-			m_css_node[url].nodeValue = rcs;
+			css_node.nodeValue = rcs;
 			cfg.forcePlhdr = true;
 			cfg.advDimming = false;
 		} else {
@@ -1197,9 +1134,9 @@ async function start(cfg, url)
 			if (cfg.advDimming) b_forced = true;
 			cfg.forcePlhdr = true;
 			cfg.advDimming = false;
-			var cs = m_css_node[url].nodeValue;
+			var cs = css_node.nodeValue;
 			var rcs = cs.replaceAll(/filter.*?brightness.*?contrast.*?important\;/mg,'');
-			m_css_node[url].nodeValue = rcs;
+			css_node.nodeValue = rcs;
 		}
 	}
 	}
@@ -1214,83 +1151,53 @@ async function start(cfg, url)
 	style_rule += "frame,iframe { filter:invert(1); }";
 	}
 
-	m_css_node[url].nodeValue += style_rule;
+	css_node.nodeValue += style_rule;
 
-	m_style_node[url].appendChild(m_css_node[url]);
+	style_node.appendChild(css_node);
 
-	if ((cfg.customCss && cfg.customCssText) || m_g_globalCss[url]) {
+	if ((cfg.customCss && cfg.customCssText) || g_globalCss) {
 
 	let docs = getComputedStyle(document.documentElement);
 
-	m_g_bg_contrast_old[url] = docs.getPropertyValue('--g_bg_contrast_old');
-	if (!m_g_bg_contrast_old[url] || m_g_bg_contrast_old[url] == undefined)
-		m_g_bg_contrast_old[url] = 19;
+	g_bg_contrast_old = docs.getPropertyValue('--g_bg_contrast_old');
+	if (!g_bg_contrast_old || g_bg_contrast_old == undefined)
+		g_bg_contrast_old = 19;
 
-	m_g_bg_contrast[url] = docs.getPropertyValue('--g_bg_contrast');
-	if (!m_g_bg_contrast[url] || m_g_bg_contrast[url] == undefined)
-		m_g_bg_contrast[url] = 27;
+	g_bg_contrast = docs.getPropertyValue('--g_bg_contrast');
+	if (!g_bg_contrast || g_bg_contrast == undefined)
+		g_bg_contrast = 27;
 
-	m_g_fg_brightness_min[url] = docs.getPropertyValue('--g_fg_brightness_min');
-	if (!m_g_fg_brightness_min[url] || m_g_fg_brightness_min[url] == undefined)
-		m_g_fg_brightness_min[url] = 90;
+	g_fg_brightness_min = docs.getPropertyValue('--g_fg_brightness_min');
+	if (!g_fg_brightness_min || g_fg_brightness_min == undefined)
+		g_fg_brightness_min = 90;
 
-	m_g_min_colorfulness[url] = docs.getPropertyValue('--g_min_colorfulness');
-	if (!m_g_min_colorfulness[url] || m_g_min_colorfulness[url] == undefined)
-		m_g_min_colorfulness[url] = 41;
+	g_min_colorfulness = docs.getPropertyValue('--g_min_colorfulness');
+	if (!g_min_colorfulness || g_min_colorfulness == undefined)
+		g_min_colorfulness = 41;
 
-	m_g_bg_threshold[url] = docs.getPropertyValue('--g_bg_threshold');
-	if (!m_g_bg_threshold[url] || m_g_bg_threshold[url] == undefined)
-		m_g_bg_threshold[url] = 160;
+	g_bg_threshold = docs.getPropertyValue('--g_bg_threshold');
+	if (!g_bg_threshold || g_bg_threshold == undefined)
+		g_bg_threshold = 160;
 
-	m_g_bg_threshold_new[url] = docs.getPropertyValue('--g_bg_threshold_new');
-	if (!m_g_bg_threshold_new[url] || m_g_bg_threshold_new[url] == undefined)
-		m_g_bg_threshold_new[url] = 50;
+	g_bg_threshold_new = docs.getPropertyValue('--g_bg_threshold_new');
+	if (!g_bg_threshold_new || g_bg_threshold_new == undefined)
+		g_bg_threshold_new = 50;
 
-	m_g_bg_threshold_new_default[url] = docs.getPropertyValue('--g_bg_threshold_new_default');
-	if (!m_g_bg_threshold_new_default[url] || m_g_bg_threshold_new_default[url] == undefined)
-		m_g_bg_threshold_new_default[url] = 150;
+	g_bg_threshold_new_default = docs.getPropertyValue('--g_bg_threshold_new_default');
+	if (!g_bg_threshold_new_default || g_bg_threshold_new_default == undefined)
+		g_bg_threshold_new_default = 150;
 
 	} else {
-		m_g_bg_contrast_old[url] = 19;
-		m_g_bg_contrast[url] = 27;
-		m_g_fg_brightness_min[url] = 90;
-		m_g_min_colorfulness[url] = 41;
-		m_g_bg_threshold[url] = 160;
-		m_g_bg_threshold_new[url] = 50;
-		m_g_bg_threshold_new_default[url] = 150;
+		g_bg_contrast_old = 19;
+		g_bg_contrast = 27;
+		g_fg_brightness_min = 90;
+		g_min_colorfulness = 41;
+		g_bg_threshold = 160;
+		g_bg_threshold_new = 50;
+		g_bg_threshold_new_default = 150;
 	}
 
 	var doc = document;
-/**		if (!cfg.ssrules) {
-	let sheets = doc.styleSheets;
-	for (let j =0; j < sheets.length; j++ ) {
-		try {
-			const ruleList = sheets[j].cssRules;
-			let rl = ruleList.length;
-			for (let i = 0; i < ruleList.length; i++) {
-				if (ruleList[i].href) { ruleList = ruleList[i].styleSheet.cssRules; i = 0; continue; }
-				if (ruleList[i].style && /\d+.*?px/i.test(ruleList[i].style.fontSize)) {
-				let fsz = parseInt(ruleList[i].style.fontSize);
-				if (/font(-size)?/i.test(ruleList[i].style.cssText))
-				if (fsz > 1 && fsz <= cfg.threshold ) {
-					if (/\b(BODY|HTML|\-\-root)/i.test(ruleList[i].selectorText) && cfg.advDimming) {
-						let tmp = f_sizes[fsz].replace(/filter.*brightness.*contrast[^;]* /mg, '');
-						sheets[j].insertRule(ruleList[i].selectorText + "{" + tmp + "}", ruleList.length);
-						b_csp = false;
-					} else {
-						sheets[j].insertRule(ruleList[i].selectorText + "{" + f_sizes[fsz] + "}", ruleList.length);
-						b_csp = false;
-					}
-				}
-				}
-			}
-		} catch (error) {
-			b_csp = true;
-			console.log('cssrules security!');
-			break;
-		}
-	}
-	}*/
 	let rn = 0;
 	let b_sec = false;
 	let body_nfz = 16;
@@ -1336,9 +1243,9 @@ async function start(cfg, url)
 					let fgarr = b;
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1352,9 +1259,9 @@ async function start(cfg, url)
 					let fgarr = getRGBarr(rule.style.color);
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1370,9 +1277,9 @@ async function start(cfg, url)
 					let fgarr = hexToRGBA(b);
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1387,9 +1294,9 @@ async function start(cfg, url)
 					let fgarr = hslToRGB(c);
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1416,9 +1323,9 @@ async function start(cfg, url)
 					let fgarr = b;
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1432,9 +1339,9 @@ async function start(cfg, url)
 					let fgarr = getRGBarr(rule.style.backgroundColor);
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1450,9 +1357,9 @@ async function start(cfg, url)
 					let fgarr = hexToRGBA(b);
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1467,9 +1374,9 @@ async function start(cfg, url)
 					let fgarr = hslToRGB(c);
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1496,9 +1403,9 @@ async function start(cfg, url)
 					let fgarr = b;
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1512,9 +1419,9 @@ async function start(cfg, url)
 					let fgarr = getRGBarr(rule.style.borderColor);
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1530,9 +1437,9 @@ async function start(cfg, url)
 					let fgarr = hexToRGBA(b);
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1547,9 +1454,9 @@ async function start(cfg, url)
 					let fgarr = hslToRGB(c);
 					var fgr1;
 					if (cfg.advDimming)
-						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([parseInt(fgarr[0]), parseInt(fgarr[1]), parseInt(fgarr[2])]);
 					else
-						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+						fgr1 = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 					fgr1[3] = fgarr[3];
 					if (fgr1[0] != fgarr[0] || fgr1[1] != fgarr[1] || fgr1[2] != fgarr[2]) {
 					if (cfg.normalInc2) {
@@ -1572,7 +1479,7 @@ async function start(cfg, url)
 			if (colr.substring(0,3) == 'rgb') {
 			let fgarr = getRGBarr(colr);
 			if (m_sty[fgarr] == undefined) {
-				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
@@ -1583,7 +1490,7 @@ async function start(cfg, url)
 			let c = getHSLarr(colr);
 			let fgarr = hslToRGB(c);
 			if (m_sty[fgarr] == undefined) {
-				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
@@ -1594,7 +1501,7 @@ async function start(cfg, url)
 			let c = colr.length == 4 ? colr+'f' : colr+'ff';
 			let fgarr = hexToRGBA(c);
 			if (m_sty[fgarr] == undefined) {
-				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
@@ -1613,7 +1520,7 @@ async function start(cfg, url)
 			if (colr.substring(0,3) == 'rgb') {
 			let fgarr = getRGBarr(colr);
 			if (m_sty[fgarr] == undefined) {
-				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
@@ -1624,7 +1531,7 @@ async function start(cfg, url)
 			let c = getHSLarr(colr);
 			let fgarr = hslToRGB(c);
 			if (m_sty[fgarr] == undefined) {
-				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
@@ -1635,7 +1542,7 @@ async function start(cfg, url)
 			let c = colr.length == 4 ? colr+'f' : colr+'ff';
 			let fgarr = hexToRGBA(c);
 			if (m_sty[fgarr] == undefined) {
-				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
@@ -1654,7 +1561,7 @@ async function start(cfg, url)
 			if (colr.substring(0,3) == 'rgb') {
 			let fgarr = getRGBarr(colr);
 			if (m_sty[fgarr] == undefined) {
-				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
@@ -1665,7 +1572,7 @@ async function start(cfg, url)
 			let c = getHSLarr(colr);
 			let fgarr = hslToRGB(c);
 			if (m_sty[fgarr] == undefined) {
-				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
@@ -1676,7 +1583,7 @@ async function start(cfg, url)
 			let c = colr.length == 4 ? colr+'f' : colr+'ff';
 			let fgarr = hexToRGBA(c);
 			if (m_sty[fgarr] == undefined) {
-				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])], url);
+				fgr = applyColorMatrix([255-parseInt(fgarr[0]), 255-parseInt(fgarr[1]), 255-parseInt(fgarr[2])]);
 				fgr[3] = fgarr[3];
 				if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 				m_sty[fgarr] = fgr;
@@ -1698,7 +1605,7 @@ async function start(cfg, url)
 			if (/[\d\.]+.*?px/i.test(rt)) {
 			let nfz = parseInt(rt);
 			if (nfz <= cfg.threshold && nfz > 1) {
-			txtrul = key+' { font-size: '+m_f2_sizes[url][nfz]+' !important; }';
+			txtrul = key+' { font-size: '+f2_sizes[nfz]+' !important; }';
 			n_rulecount++;
 			b_bdone = true;
 			if (!cfg.ssrules) m_done[key] = 3;
@@ -1716,13 +1623,13 @@ async function start(cfg, url)
 			if (/[\d\.]+.*?px/i.test(rt)) {
 			let nfz = parseInt(rt);
 			if (nfz <= cfg.threshold && nfz > 1) {
-			txtrul = key+' { '+m_f_sizes[url][nfz]+' }';
+			txtrul = key+' { '+f_sizes[nfz]+' }';
 			n_rulecount++;
 			}
 			} else if (/[\d\.]+.*?pt/i.test(rt)) {
 			let nfz = parseInt(parseFloat(rt)*1.333334);
 			if (nfz <= cfg.threshold && nfz > 1) {
-			txtrul = key+' { '+m_f_sizes[url][nfz]+' }';
+			txtrul = key+' { '+f_sizes[nfz]+' }';
 			n_rulecount++;
 			}
 			}/* else if (/[\d\.]+.*?r?em/i.test(rt)) {
@@ -1744,7 +1651,7 @@ async function start(cfg, url)
 				if (/\d+.*?px/i.test(rt)) {
 				let fsz = parseInt(rt);
 				if (fsz > 1 && fsz <= cfg.threshold) {
-					txtrul = key + ' { ' + m_f_sizes[url][fsz] + ' }';
+					txtrul = key + ' { ' + f_sizes[fsz] + ' }';
 					}
 				}
 		}
@@ -1754,7 +1661,7 @@ async function start(cfg, url)
 		}
 		}
 		if (!b_sec && txtrul) {
-			m_style_node[url].sheet.insertRule(txtrul, 0);
+			style_node.sheet.insertRule(txtrul, 0);
 			b_sec = false;
 		}
 
@@ -1765,6 +1672,29 @@ async function start(cfg, url)
 		}
 	}
 	if (n_rulecount < 3) { console.log('Rule count cleared'); n_rulecount = 0; }
+
+	if (!cfg.fontFamilyName || !cfg.fontFamily) {
+		let rul = 'var(--g_btvfont)';
+		if (style_node.sheet != undefined) {
+		let rl = style_node.sheet.cssRules;
+		let x = 0;
+		for (x = 0; x < rl.length; x++ )
+			if (rl[x].cssText.indexOf(rul) > -1) break;
+		if (x < rl.length)
+			style_node.sheet.deleteRule(x);
+		}
+	} else {
+		let fntFmly = `*{font-family:var(--g_btvfont)!important;}`;
+		if (cfg.fontFamily) {
+			document.documentElement.style.setProperty('--g_btvfont',cfg.fontFamilyName);
+			g_fntRule = true;
+		} else {
+			fntFmly = '';
+			document.documentElement.style.setProperty('--g_btvfont','');
+			g_fntRule = false;
+		}
+		style_node.sheet.insertRule(fntFmly, 0);
+	}
 
 		if (cfg.forcePlhdr && cfg.forceIInv) {
 		let ms = null;
@@ -1903,7 +1833,7 @@ async function start(cfg, url)
 
 	const process = async (nodes, mutation = false) =>
 	{
-		m_b_body[url] = false;
+		b_body = false;
 		b_ctext = {};
 		b_chimg = {};
 		b_iimg = {};
@@ -2018,7 +1948,7 @@ async function start(cfg, url)
 				htm.style.setProperty('filter','invert(1)','important');
 			if (cfg.forceIInv) {
 			var hdrs;
-			if (!m_b_html[url])
+			if (!b_html)
 				hdrs = Array.from(document.body.getElementsByTagName('HEADER'));
 			else
 				hdrs = Array.from(htm.getElementsByTagName('HEADER'));
@@ -2029,7 +1959,7 @@ async function start(cfg, url)
 				hdr = hdrs[0];
 				if (hdr == undefined || hdr == null) hdr = hdrs[1];
 			} else {
-				if (!m_b_html[url])
+				if (!b_html)
 					hdrs = Array.from(document.body.getElementsByTagName('*'));
 				else
 					hdrs = Array.from(htm.getElementsByTagName('*'));
@@ -2118,7 +2048,7 @@ async function start(cfg, url)
 				}
 			}*/
 			}
-			m_b_html[url] = true;
+			b_html = true;
 		}
 
 		}
@@ -2157,6 +2087,7 @@ async function start(cfg, url)
 			let tag = String(node.nodeName.toUpperCase());
 			let pnode = node.parentNode;
 			let sk = false;
+			let is_einput = /^(INPUT|SELECT|TEXT|TEXTAREA)/.test(tag);
 			var style, is_oinput, is_xinput;
 
 			if (tags_to_skip.includes(tag) || (cfg.skipHeadings && hdr_tags.includes(tag))) return;
@@ -2178,7 +2109,7 @@ async function start(cfg, url)
 				}
 			}
 
-			if (cfg.forceOpacity && !cfg.start3 && cfg.skipLinks && !m_b_body[url] && cfg.forcePlhdr && pnode != null && pnode.nodeName == 'BODY') {
+			if (cfg.forceOpacity && !cfg.start3 && cfg.skipLinks && !b_body && cfg.forcePlhdr && pnode != null && pnode.nodeName == 'BODY') {
 				let fsty = getComputedStyle(pnode).getPropertyValue('background-color');
 				if (fsty == null || fsty == '' || fsty == 'none') fsty = 'rgb(0,0,0)';
 				let bcol = getRGBarr(fsty);
@@ -2186,15 +2117,15 @@ async function start(cfg, url)
 				bcol[1] = 255 - bcol[1];
 				bcol[2] = 255 - bcol[2];
 				fsty = 'rgb('+bcol[0]+','+bcol[1]+','+bcol[2]+')';
-				m_b_body[url] = true;
+				b_body = true;
 				pnode.style.setProperty('background-color',fsty);
 			}
 
 			if (n_rulecount > 0) {
 			style = getComputedStyle(node);
-			if (style.fontSize && !m_f2_sizes[url].includes(style.fontSize))
+			if (style.fontSize && !f2_sizes.includes(style.fontSize))
 				sk = false;
-			else if (style.fontSize && m_f2_sizes[url].includes(style.fontSize))
+			else if (style.fontSize && f2_sizes.includes(style.fontSize))
 				sk = true;
 			}
 
@@ -2203,17 +2134,17 @@ async function start(cfg, url)
 
 			node_count = map.get(node);
 
-			if (/(INPUT|TEXTAREA|SELECT)/.test(tag)) {
+			if (is_einput) {
 				is_xinput = node.type && g_nokinput.test(node.type);
 				is_oinput = node.type && g_okinput.test(node.type);
 			}
 
-			if (/(INPUT|TEXTAREA|SELECT)/.test(tag) && is_oinput)
+			if (is_einput && is_oinput)
 			if (cfg.input_border && !node.getAttribute('b__'))
 				if (!(!cfg.start3 && cfg.skipLinks))
 					node.setAttribute('b__', '');
 
-			if (cfg.normalInc && cfg.forcePlhdr && (!b_iimg[node_count] || style.filter.indexOf('invert') < 0) && !nodes_behind_inv.includes(node) && m_m_fcol[url].get(node) == undefined && m_m_bcol[url].get(node) == undefined && m_m_bocol[url].get(node) == undefined) {
+			if (cfg.normalInc && cfg.forcePlhdr && (!b_iimg[node_count] || style.filter.indexOf('invert') < 0) && !nodes_behind_inv.includes(node) && m_fcol.get(node) == undefined && m_bcol.get(node) == undefined && m_bocol.get(node) == undefined) {
 				var cs,pcs;
 				let err = false;
 				try {
@@ -2231,27 +2162,6 @@ async function start(cfg, url)
 				let bog2 = !colors_to_skip.includes(pcs.borderTopColor) ? pcs.borderTopColor : ''  || !colors_to_skip.includes(pcs.borderRightColor) ? pcs.borderRightColor : '' || !colors_to_skip.includes(pcs.borderBottomColor) ? pcs.borderBottomColor : '' || !colors_to_skip.includes(pcs.borderLeftColor) ? pcs.borderLeftColor : '';
 				var fgbrt, bgbrt;
 				if (fg == fg2 && bg == bg2 && bog == bog2) {
-					/*if (typeof m_fcol.get(pnode) != 'undefined') {
-						let fgr = m_fcol.get(pnode);
-						node.style.setProperty('color','inherit'); //'rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgr[3]+')','important');
-					}
-					if (typeof m_bcol.get(pnode) != 'undefined') {
-						let fgr = m_bcol.get(pnode);
-						node.style.setProperty('background-color','inherit'); //,'rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgr[3]+')','important');
-					}
-					if (typeof m_bocol.get(pnode) != 'undefined') {
-						let fgr = m_bocol.get(pnode);
-						if (bog == cs.borderColor)
-							node.style.setProperty('border-color','inherit'); //,'rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgr[3]+')','important');
-						else if (bog == cs.borderTopColor)
-							node.style.setProperty('border-top-color','inherit'); //,'rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgr[3]+')','important');
-						else if (bog == cs.borderBottomColor)
-							node.style.setProperty('border-bottom-color','inherit'); //,'rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgr[3]+')','important');
-						else if (bog == cs.borderLeftColor)
-							node.style.setProperty('border-left-color','inherit'); //,'rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgr[3]+')','important');
-						else if (bog == cs.borderRightColor)
-							node.style.setProperty('border-right-color','inherit'); //,'rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgr[3]+')','important');
-					}*/
 				} else {
 				if (fg.length > 0) {
 					let fgarr = getRGBarr(fg);
@@ -2263,17 +2173,17 @@ async function start(cfg, url)
 							fgr = m_sty[fgarr];
 						if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2] || fgr[3] != fgarr[3]) {
 						node.style.setProperty('color','rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgarr[3]+')','important');
-						m_m_fcol[url].set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
+						m_fcol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						m_sty[fgarr] = fgr;
 						m_sty[fgr] = fgr;
 						}
 					} else {
-					let fgr = applyColorMatrix([255-fgarr[0], 255-fgarr[1], 255-fgarr[2]], url);
+					let fgr = applyColorMatrix([255-fgarr[0], 255-fgarr[1], 255-fgarr[2]]);
 					fgr[3] = fgarr[3];
 					if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 					fgbrt = calcBrightness([fgr[0],fgr[1],fgr[2],fgarr[3]]);
 					if (fgbrt >= 0) {
-						m_m_fcol[url].set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
+						m_fcol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						node.style.setProperty('color','rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgarr[3]+')','important');
 						m_sty[fgarr] = fgr;
 						m_sty[fgr] = fgr;
@@ -2291,15 +2201,15 @@ async function start(cfg, url)
 						else
 							fgr = m_sty[fgarr];
 						if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2] || fgr[3] != fgarr[3]) {
-						m_m_bocol[url].set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
+						m_bocol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						m_sty[fgarr] = fgr;
 						m_sty[fgr] = fgr;
 						}
 					} else {
-						fgr = applyColorMatrix([255-fgarr[0], 255-fgarr[1], 255-fgarr[2]], url);
+						fgr = applyColorMatrix([255-fgarr[0], 255-fgarr[1], 255-fgarr[2]]);
 						fgr[3] = fgarr[3];
 						if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
-						m_m_bocol[url].set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
+						m_bocol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						m_sty[fgarr] = fgr;
 						m_sty[fgr] = fgr;
 						}
@@ -2307,7 +2217,7 @@ async function start(cfg, url)
 					if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2] || fgr[3] != fgarr[3]) {
 					bgbrt = calcBrightness([fgr[0],fgr[1],fgr[2],fgarr[3]]);
 					if (bgbrt > 0 && (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2] || fgr[3] != fgarr[3])) {
-						m_m_bocol[url].set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
+						m_bocol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						if (bog == cs.borderColor)
 							node.style.setProperty('border-color','rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgarr[3]+')','important');
 						else if (bog == cs.borderTopColor)
@@ -2331,17 +2241,17 @@ async function start(cfg, url)
 							fgr = m_sty[fgarr];
 						if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2] || fgr[3] != fgarr[3]) {
 						node.style.setProperty('background-color','rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgarr[3]+')','important');
-						m_m_bcol[url].set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
+						m_bcol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						m_sty[fgarr] = fgr;
 						m_sty[fgr] = fgr;
 						}
 					} else {
-					let fgr = applyColorMatrix([255-fgarr[0], 255-fgarr[1], 255-fgarr[2]], url);
+					let fgr = applyColorMatrix([255-fgarr[0], 255-fgarr[1], 255-fgarr[2]]);
 					fgr[3] = fgarr[3];
 					if (fgr[0] != fgarr[0] || fgr[1] != fgarr[1] || fgr[2] != fgarr[2]) {
 					bgbrt = calcBrightness([fgr[0],fgr[1],fgr[2],fgarr[3]]);
 					if (bgbrt > 0) {
-						m_m_bcol[url].set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
+						m_bcol.set(node, [fgarr[0],fgarr[1],fgarr[2],fgarr[3]]);
 						node.style.setProperty('background-color','rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgarr[3]+')','important');
 						m_sty[fgarr] = fgr;
 						m_sty[fgr] = fgr;
@@ -2386,7 +2296,7 @@ async function start(cfg, url)
 					if (sh.length > 0 && sfz*2.75 < parseInt(sh))
 						nheight = '';
 					else if (sfz < cfg.threshold)
-						nheight = ';height:' + m_h_sizes[url][sfz] + ';';
+						nheight = ';height:' + h_sizes[sfz] + ';';
 					let nsty = node.getAttribute('style');
 					if (nsty == null) nsty = '';
 					if ((nsty+nheight+nwidth).length > 0)
@@ -2396,11 +2306,11 @@ async function start(cfg, url)
 
 			if (cfg.start3)
 			if (!node.hasAttribute(focalAnchors.attrNameContainer) && b_ctext[node_count] > 1) {
-				if (m_doc_obs[url] != undefined && m_doc_obs[url] != null)
-					m_doc_obs[url].disconnect();
+				if (doc_obs != undefined && doc_obs != null)
+					doc_obs.disconnect();
 				focalAnchors.toggleAnchorsByRef(node, false, cfg.skipLinks, cfg.weight);
-				if (m_doc_obs[url] != undefined && m_doc_obs[url] != null)
-					m_doc_obs[url].observe(document.body, { childList: true, subtree: true });
+				if (doc_obs != undefined && doc_obs != null)
+					doc_obs.observe(document.body, { childList: true, subtree: true });
 			}
 
 			if (!sk || is_oinput) {
@@ -2425,15 +2335,15 @@ async function start(cfg, url)
 					}
 					node.setAttribute('s__', nfz);
 					if (style.fontSize == sfz) {
-						node.style.setProperty('font-size',m_f2_sizes[url][nfz],'important');
+						node.style.setProperty('font-size',f2_sizes[nfz],'important');
 					if (!cfg.skipHeights)
-						node.style.setProperty('line-height', m_h_sizes[url][nfz],"important");
+						node.style.setProperty('line-height', h_sizes[nfz],"important");
 					if (cfg.advDimming) {
 						if (!nn_reg.test(nsty) || cfg.ssrules)
-							node.style.setProperty('filter',m_str_style[url],'important');
+							node.style.setProperty('filter',str_style,'important');
 					}
 					if (cfg.forceOpacity)
-						node.style.setProperty('opacity',m_str_style2[url],'important');
+						node.style.setProperty('opacity',str_style2,'important');
 					} else if (nn_reg.test(nsty) && cfg.advDimming && cfg.ssrules) {
 						nsty += 'filter:'+str_style+'!important;';
 						node.setAttribute('style',nsty);
@@ -2443,7 +2353,7 @@ async function start(cfg, url)
 				}
 				if (b_ctext[node_count] > 0 && parseInt(style.lineHeight) <= nfz) {
 					let rsty = nsty;
-					rsty += ';line-height:'+m_h_sizes[url][2]+'!important;';
+					rsty += ';line-height:'+h_sizes[2]+'!important;';
 					node.setAttribute('style',rsty);
 					nsty = node.getAttribute('style');
 					if (nsty == null) nsty = '';
@@ -2455,28 +2365,28 @@ async function start(cfg, url)
 				if (parseFloat(sfz) <= cfg.threshold) {
 					node.setAttribute('s__', nfz);
 					if (style.fontSize == sfz) {
-						node.style.setProperty('font-size',m_f2_sizes[url][nfz],'important');
+						node.style.setProperty('font-size',f2_sizes[nfz],'important');
 					if (!cfg.skipHeights)
-						node.style.setProperty('line-height', m_h_sizes[url][nfz],"important");
+						node.style.setProperty('line-height', h_sizes[nfz],"important");
 					if (cfg.advDimming) {
 						if (!/revert/.test(node.style.filter) || cfg.ssrules)
-							node.style.setProperty('filter',m_str_style[url],'important');
+							node.style.setProperty('filter',str_style,'important');
 					}
 					if (cfg.forceOpacity)
-						node.style.setProperty('opacity',m_str_style2[url],'important');
+						node.style.setProperty('opacity',str_style2,'important');
 					} else if (cfg.advDimming) {
 						let nsty = node.getAttribute('style');
 						if (nsty == null) nsty = '';
 						if (/revert/.test(nsty) && cfg.ssrules) {
-							nsty += 'filter:'+m_str_style[url]+'!important;';
+							nsty += 'filter:'+str_style+'!important;';
 							node.setAttribute('style',nsty);
-						//	node.style.setProperty('filter',str_style);
+						//	node.style.setProperty('filter',m_str_style);
 						}
 					}
 				}
 			}
 			}
-			if (cfg.threshold > 0 && (!b_iimg[node_count] || b_ctext[node_count] > 0 || (/^(INPUT|SELECT|TEXTAREA|TEXT)/i.test(tag) && is_oinput))) {
+			if (cfg.threshold > 0 && (!b_iimg[node_count] || b_ctext[node_count] > 0 || (is_einput && is_oinput))) {
 				let nsty = node.getAttribute('style');
 				if (nsty == null) nsty = '';
 				if (cfg.normalInc2)
@@ -2543,7 +2453,7 @@ async function start(cfg, url)
 				if (!cfg.skipHeights && !node.hasAttribute('s__') && (b_ctext[node_count] > 2 || (node.type && is_oinput)) && (node.getElementsByTagName('*').length < 4 || (cfg.start3 && node.hasAttribute(focalAnchors.attrNameContainer) && node.getElementsByTagName('*').length < 50)))
 					node.setAttribute('h__', 3);
 				if (cfg.makeCaps) {
-					if (eng)
+					if (g_eng)
 						node.style.setProperty('font-variant-caps', 'small-caps');
 					else
 						node.style.setProperty('text-transform', 'uppercase');
@@ -2568,7 +2478,7 @@ async function start(cfg, url)
 					}
 				}
 				}
-				if (/^(INPUT|TEXTAREA|SELECT)/i.test(tag) && b_dim[node_count] != true) {
+				if (is_einput && b_dim[node_count] != true) {
 					b_dim[node_count] = true;
 					if (!is_xinput) {
 					if (!(cfg.input_border && !cfg.start3 && cfg.skipLinks))
@@ -2586,7 +2496,7 @@ async function start(cfg, url)
 					if (nsty.length > 0 && !cfg.skipHeights)
 						node.setAttribute('style', nsty);
 					}
-					if (!node.disabled && cfg.strength % 2 == 1 && (/(SELECT|TEXTAREA|TEXT)/i.test(tag) || is_oinput)) {
+					if (!node.disabled && cfg.strength % 2 == 1 && (is_einput || is_oinput)) {
 					let txtcolor = style.color;
 					if (txtcolor == null || txtcolor.length < 1) txtcolor = 'rgb(0,0,0)';
 					let txt_brt = calcBrightness(getRGBarr(txtcolor));
@@ -2658,21 +2568,21 @@ async function start(cfg, url)
 
 			let bg_brt          = calcBrightness(getRGBarr(bg_color));
 
-			let bg_threshold    = m_g_bg_threshold[url] - cfg.strength; // + img_offset;
+			let bg_threshold    = g_bg_threshold - cfg.strength; // + img_offset;
 
 			let contrast        = color == bg_color ? fg_brt :  Math.abs(bg_brt - fg_brt);
 
 			if (cfg.ssrules)
 				if (cfg.strength == 0)
-					bg_threshold = m_g_bg_threshold_new_default[url];
+					bg_threshold = g_bg_threshold_new_default;
 				else
-					bg_threshold = m_g_bg_threshold_new[url] - cfg.strength;
+					bg_threshold = g_bg_threshold_new - cfg.strength;
 
 			if (cfg.skipColoreds) {
 				let fg_colorfulness   = calcColorfulness(rgba_arr);
 				let min_contrast      = cfg.strength / 3;
 				let min_link_contrast = min_contrast;
-				let min_colorfulness  = m_g_min_colorfulness[url];
+				let min_colorfulness  = g_min_colorfulness;
 
 				if (is_link)
 					min_contrast = min_link_contrast;
@@ -2691,9 +2601,9 @@ async function start(cfg, url)
 			if (bg_brt > bg_threshold)
 			if (!cfg.forcePlhdr) {
 				let bstl = '';
-				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > m_g_bg_contrast_old[url]) {
+				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
-				} else if (bg_brt >= 0 && bg_brt <= 176 && fg_brt > 176 && 255-bg_brt > m_g_bg_contrast_old[url]) {
+				} else if (bg_brt >= 0 && bg_brt <= 176 && fg_brt > 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
 				} else if (bg_brt > 176 && bg_brt <= 255 && fg_brt <= 176) {
 					bstl = 'black';
@@ -2706,9 +2616,9 @@ async function start(cfg, url)
 				node.style.setProperty('color',bstl,'important'); }
 			} else if (cfg.forcePlhdr) {
 				let bstl = '';
-				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > m_g_bg_contrast_old[url]) {
+				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
-				} else if (bg_brt >= 0 && bg_brt <= 176 && fg_brt > 176 && 255-bg_brt > m_g_bg_contrast_old[url]) {
+				} else if (bg_brt >= 0 && bg_brt <= 176 && fg_brt > 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
 				} else if (bg_brt > 176 && bg_brt <= 255 && fg_brt <= 176) {
 					bstl = 'black';
@@ -2721,9 +2631,9 @@ async function start(cfg, url)
 				node.style.setProperty('color',bstl,'important'); }
 			} else {
 				let bstl = '';
-				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > m_g_bg_contrast_old[url]) {
+				if (cfg.strength > 200 && fg_brt >= 95 && bg_brt <= 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
-				} else if (fg_brt > 176 && 255-bg_brt > m_g_bg_contrast_old[url]) {
+				} else if (fg_brt > 176 && 255-bg_brt > g_bg_contrast_old) {
 					bstl = 'white';
 				} else if (bg_brt == 256 && fg_brt > 176) {
 					bstl = 'white';
@@ -2741,16 +2651,16 @@ async function start(cfg, url)
 			if (!cfg.forcePlhdr) {
 				if (fg_brt/255 < str/300.0)
 					bstl = '#000';
-				else if (bg_brt < m_g_bg_contrast[url])
+				else if (bg_brt < g_bg_contrast)
 					bstl = '#fff';
-				if (255-bg_brt > contrast && fg_brt > m_g_fg_brightness_min[url] && !bg_transp)
+				if (255-bg_brt > contrast && fg_brt > g_fg_brightness_min && !bg_transp)
 					if (bstl == '#000')
 						bstl = '#fff';
 				node.style.setProperty('color',bstl,'important');
 			} else if (cfg.forcePlhdr) {
 				if (fg_brt/255 < str/300.0)
 					bstl = '#000';
-				else if (bg_brt < m_g_bg_contrast[url])
+				else if (bg_brt < g_bg_contrast)
 					bstl = '#fff';
 				if (nodes_behind_inv.includes(node))
 					if (bstl == '#000')
@@ -2792,9 +2702,9 @@ async function start(cfg, url)
 
 	await process(nodes);
 
-	m_t_end[url] = Date.now();
+	t_end = Date.now();
 
-	console.log('Time processing = '+((m_t_end[url]-m_t_start[url])/1000.0).toFixed(2) + ' seconds');
+	console.log('Time processing = '+((t_end-t_start)/1000.0).toFixed(2) + ' seconds');
 	const observer = mutations => {
 		let new_nodes = [];
 
@@ -2811,16 +2721,16 @@ async function start(cfg, url)
 		});
 
 		if(new_nodes.length) {
-			m_b_html[url] = false;
+			b_html = false;
 			setTimeout(() => process(new_nodes, true), 55);
 		}
 	};
 
-	if (m_doc_obs[url] != undefined && m_doc_obs[url] != null) {
-		m_doc_obs[url].observe(document.body, { childList: true, subtree: true });
+	if (doc_obs != undefined && doc_obs != null) {
+		doc_obs.observe(document.body, { childList: true, subtree: true });
 	} else {
-		m_doc_obs[url] = new MutationObserver(observer);
-		m_doc_obs[url].observe(document.body, { childList: true, subtree: true });
+		doc_obs = new MutationObserver(observer);
+		doc_obs.observe(document.body, { childList: true, subtree: true });
 	}
 }
 
@@ -2854,26 +2764,23 @@ function changeBrightnessContrast() {
 	else
 		document.documentElement.style.setProperty('--g_zoom',1.75);
 
-	if (res.afont.length > 0 && m_g_fontName[url] != res.afont.trim()) {
-		document.documentElement.style.setProperty('--g_btvfont',res.afont.trim());
-		m_g_fontName[url] = res.afont.trim();
-		m_g_fntRule[url] = true;
-/*		let rul = `*{font-family:var(--g_btvfont)!important;}`;
-		if (!m_g_fntRule[url]) {
-			m_style_node[url].sheet.insertRule(rul,0);
-			m_g_fntRule[url] = true;
-		}*/
-	} else if (m_g_fntRule[url]) {
+	if (res.afont.length > 0) {
+		document.documentElement.style.setProperty('--g_btvfont',res.afont);
+		let rul = `*{font-family:var(--g_btvfont)!important;}`;
+		if (!g_fntRule) {
+			style_node.sheet.insertRule(rul,0);
+			g_fntRule = true;
+		}
+	} else if (g_fntRule) {
 		document.documentElement.style.setProperty('--g_btvfont','');
-		m_g_fntRule[url] = false;
-		m_g_fontName[url] = '';
-/*		let rul = 'var(--g_btvfont)';
-		let rl = m_style_node[url].sheet.cssRules;
+		g_fntRule = false;
+		let rul = 'var(--g_btvfont)';
+		let rl = style_node.sheet.cssRules;
 		let x = 0;
 		for (x = 0; x < rl.length; x++ )
 			if (rl[x].cssText.indexOf(rul) > -1) break;
 		if (x < rl.length)
-			m_style_node[url].sheet.deleteRule(x);*/
+			style_node.sheet.deleteRule(x);
 	}
 
 	document.documentElement.style.setProperty('--g_brightness',g_brt);
@@ -2882,48 +2789,44 @@ function changeBrightnessContrast() {
 	let f_brt = parseInt(g_brt)/100;
 	let f_ctr = parseInt(g_ctr)/100;
 
-	m_g_brightness[url] = f_brt;
-	m_g_contrast[url] = f_ctr;
+	g_brightness = f_brt;
+	g_contrast = f_ctr;
 
-	m_g_m2[url] = Matrix.identity();
-	m_g_m[url] = multiplyMatrices(m_g_m2[url], Matrix.brightness(f_brt));
-	m_g_m2[url] = multiplyMatrices(m_g_m[url], Matrix.contrast(f_ctr));
-	m_g_m[url] = multiplyMatrices(m_g_m2[url], Matrix.invertNHue());
+	g_m = multiplyMatrices(Matrix.identity(), Matrix.brightness(f_brt));
+	g_m2 = multiplyMatrices(g_m, Matrix.contrast(f_ctr));
+	g_m = multiplyMatrices(g_m2, Matrix.invertNHue());
 
-	if (m_m_fcol[url] != undefined) {
-	for (let [n, col] of m_m_fcol[url].entries()) {
+	if (m_fcol != undefined)
+	for (let [n, col] of m_fcol.entries()) {
 		let fgcol = [ 255-col[0], 255-col[1], 255-col[2] ];
-		let fgr = applyColorMatrix(fgcol, url);
+		let fgr = applyColorMatrix(fgcol);
 		fgr[3] = col[3];
 		let nsty = n.getAttribute('style');
 		if (nsty == null) nsty = '';
 		let rsty = nsty.replace(/color[^\;]*/ig, 'color:rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgr[3]+')!important;');
 		n.setAttribute('style',rsty);
 	}
-	}
 
-	if (m_m_bcol[url] != undefined) {
-	for (let [n, col] of m_m_bcol[url].entries()) {
+	if (m_bcol != undefined)
+	for (let [n, col] of m_bcol.entries()) {
 		let fgcol = [ 255-col[0], 255-col[1], 255-col[2] ];
-		let fgr = applyColorMatrix(fgcol, url);
+		let fgr = applyColorMatrix(fgcol);
 		fgr[3] = col[3];
 		let nsty = n.getAttribute('style');
 		if (nsty == null) nsty = '';
 		let rsty = nsty.replace(/background-color[^\;]*/ig, 'background-color:rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgr[3]+')!important;');
 		n.setAttribute('style',rsty);
 	}
-	}
 
-	if (m_m_bocol[url] != undefined) {
-	for (let [n, col] of m_m_bocol[url].entries()) {
+	if (m_bocol != undefined)
+	for (let [n, col] of m_bocol.entries()) {
 		let fgcol = [ 255-col[0], 255-col[1], 255-col[2] ];
-		let fgr = applyColorMatrix(fgcol, url);
+		let fgr = applyColorMatrix(fgcol);
 		fgr[3] = col[3];
 		let nsty = n.getAttribute('style');
 		if (nsty == null) nsty = '';
 		let rsty = nsty.replace(/border-color[^\;]*/ig, 'border-color:rgba('+fgr[0]+','+fgr[1]+','+fgr[2]+','+fgr[3]+')!important;');
 		n.setAttribute('style',rsty);
-	}
 	}
 
 	chrome.storage.local.remove(["url","abrightness","acontrast","azoom","afont"]);
