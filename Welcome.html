@@ -53,7 +53,10 @@
 		</p>
 <h4>NEW CHANGES</h4>
 <ul>
-<li>Bugfix of handling settings in multiple tabs / windows.</li>
+<li>Changes to line height which applies to some paragraph elements, so that paragraphs lines do not appear very different due to 2 different line heights applied.</li>
+<li>Hidden setting "--g_foot_re" in either custom CSS or global CSS rules will make footer areas of website colors as normal in reverse colors.</li>
+<li>Zoom value can be given in custom CSS rules as following : <br><code>html { --g_zoom: 5.0; }</code><br> which sets the zoom value of 500% (not possible by Strength slider).</li>
+<li>Setting Strength to -300 (minus 300) skips doing high contrast text changes totally, resulting in faster processing.</li>
 <li>Global CSS rules which applies CSS rules to all sites not blacklisted.</li>
 <li>New "high contrast dark mode" enabled text contrast method determines color brightnes of text and makes non-high contrast text black / white depending on Strength slider value. Increasing Slider towards 300 makes most text black (or white for reverse colors). Decreasing slider towards zero makes most text white (or black).</li>
 <li>No more new features. Only bug fixes will be done.</li>
@@ -64,11 +67,9 @@
 <li>New "Font name" setting makes all text of font type as specified in setting. For example, enter 'Sans-Serif' / 'Serif' / 'monospace' (no quotes) in "Font name" text box and refresh page to get all text of that font type (or name).</li>
 <li>Global settings are saved when exporting a whitelist to a file.</li>
 <li>New option to Disable Better Text View on a site temporarily while keeping settings instead of deleting them (which Blacklist does).</li>
-<li>Zoom % is now dynamically changed by adjusting Strength slider, without having to refresh the page.</li>
-<li>Holding Shift key down and moving mouse over any text area will "ZOOM" the text in that area by 175% (or by Strength % if slider is not zero) when "Num Lock" key is on.</li>
+<li>Pressing Numberic keypad Add '+' key down and moving mouse over any area of page will "ZOOM" the text / image in that area by 175% (or by Strength % if slider is not zero) when "Num Lock" key is on.</li>
 <li>"Force max opacity" now changes background color of BODY element only if "Force Reverse colors" is enabled AND Skip Links is enabled + Start 3 disabled. Making text fully opaque does not depend on any other options.</li>
 <li>31 Presets can be defined with custom settings of sliders and options. These presets can be loaded to quickly change the settings to particular configuration for a site.</li>
-<li>In Dark mode and Reverse colors mode, the Brightness and Contrast sliders now <b>update the colors while changing</b> instead of requiring a refesh of webpage. This works in "Dark mode" and "Reverse colors" mode, but for normal pages there is no brightness / contrast change.</li>
 <li>The "High contrast dark mode" option, when enabled even though Dark mode is disabled, does processing of text colors by newer method (which is still work in progress). Disabling it reverts the text color contrast logic to older method.</li>
 <li>Strength slider controls the "text vs background contrast" with text color changed to black / white. Negative strength preserves original colors of site and high positive value create greater contrast. There are 2 calculation methods for contrast, the older method when "High contrast dark mode" is disabled and new method when it is enabled. Depending on website, either will work though new option is slightly faster.</li>
 <li>Option "High contrast dark mode" makes greater background + text contrast when brighness / contrast slider values are changed in Dark mode. If enabled with/without dark mode, the newer text contrast method is used. If text contrast is not working as expected, try enabling / disabling this option to chamge between old / new method of text contrast.</li>
@@ -104,9 +105,10 @@
 <li>Brightness Slider controls the brightness of text/background with 0 to 300% range for "Dark mode" and -300 to 300 for "Reverse colors".</li>
 <li>The colors of text are changed for maximum contrast depending on value of "Strength" slider (unless "Avoid colorful text" is selected which skips "colorful" text,  and if "Skip white text" option is enabled, which skips WHITE text). If greater than 200, text colors change for maximum contrast.</li>
 <li>By increasing "Strength" setting to above 200, the text can be made black on light background or white on black background (if dark mode is enabled) depending on brightness of background color ("Avoid colorful text" and "Skip white text" is ignored). If some text is still not high contrast, increase strength to maximum 300, enable "Force max opacity" and disable "Avoid colorful text". If this does not give high contrast text, change "High contrast dark mode" option.</li>
-<li>Decreasing "Strength" setting to negative values like -120 or -250 can restore the original text colors of website instead of high contrast black / white text.</li>
+<li>Decreasing "Strength" setting to negative values like -120 or -250 can restore the original text colors of website instead of high contrast black / white text. A strength of -300 (negative 300) skips all high contrast changes and original colors are kept, and page processed faster.</li>
 <li>If Strength is ODD value, and there are INPUT text boxes on site, the input text will be made black / white depending on color.</li>
 <li>The "Font Weight" slider can be changed to lowest 100 (very thin) upto 900 (very thick/bold) text. This is useful for adjusting sites having very thin text or very bold and thick text. When "Start 3 letters bold" is enabled, (slider value + 400) is taken as weight of bold letters and noramal text has weight of (slider value) if slider is less than 500. For slider above 400, the slider value is taken as weight of 3 letters and all other text is normal.</li>
+<li>Pressing Numberic keypad Add '+' key down and moving mouse over any area of page will "ZOOM" the text / image in that area by 175% (or by Strength % if slider is not zero, or '--g_zoom' value if set in custom CSS) when "Num Lock" key is on.</li>
 <li>Before a preset is made, select the preset number at the very start. Then make the customizations and finally click "Save" to save to a number between 1 to 31. This saved preset can be loaded by clicking "Load" after selecting the number of preset. Clicking "Refresh" button after all steps is recommended of knowing preset has been saved / loaded. Presets are stored in the "whitelist" list so exporting whitelist to a file will also save presets. <b>Settings with a selected preset do not get automatically updated if a preset is changed. One has to "Load" the preset again.</b></li>
 <li>ALL CAPITAL TEXT option makes all webpage text in capitals. It ALSO works on NON-ENGLISH languages.</li>
 <li>Starting 3 letters bold option makes all words first 3 letters <b>bold</b> and also works for NON-ENGLISH languages. If there are problems with some links or menus not working, enable "Skip links in 3 letters bold" option to avoid making links bold.</li>
@@ -134,9 +136,11 @@
 <li><b>--g_min_colorfulness : </b>Minimum colorfulness value to compare when "Avoid colorful text" is enabled.<br>Decreasing this will keep most text with non-grey color unchanged.<br>Increasing this will make slightly colored non-grey text into high contrast.<br> Default is 41.</li>
 <li><b>--g_bg_threshold : </b>Background brightness threshold constant is calculated with this subtracted by Strength slider value to compare with background brightness.<br>Default value is 160.</li>
 <li><b>--g_bg_threshold_new : </b>Background threshold of new text contrast method.<br>Default value is 50.</li>
-<li><b>--g_bg_threshold_new_default : </bg>The background threshold constant when Strength slider is zero in new method.<br>Default value is 150.</li>
-<li>Above "constants" have range between 0 to 255, but can have values outside of range.</li>
-<li>The values can be changed by applying Custom CSS for a site or setting in global CSS rules. Example CSS rule is <br><code>html { --g_fg_brightness_min: 99; --g_bg_contrast: 32; }</code><br>which sets the 2 internal "constants" or<br><code>a { color: #0a0; }</code><br>which changes link color to green.<br></li>
+<li><b>--g_bg_threshold_new_default : </b>The background threshold constant when Strength slider is zero in new method.<br>Default value is 150.</li>
+<li><b>--g_zoom : </b>Sets the value of zoom when zooming.</li>
+<li><b>--g_foot_re : </b>Setting this to greater than zero in custom CSS or global CSS rules makes footer areas of website normal colors in reverse colors mode. Custom CSS has priority over global CSS, so value of g_foot_re in custom CSS overrides global CSS value. <br>Example : <br><code>xyz { --g_foot_re: 11; }</code><br>xyz does not have to be some specific tag or class or id, any text will work so long as --g_foot_re value is specified.</li>
+<li>Most of above variables have range between 0 to 255, but can have values outside of range. These variables allow for more 'switches', which would otherwise take up a lot of space on Settings page. They provide more customizations through a non GUI-based way.</li>
+<li>The values can be changed by applying Custom CSS for a site or setting in global CSS rules. Example CSS rule is <br><code>html { --g_fg_brightness_min: 99; --g_bg_contrast: 32; }</code><br>which sets the 2 internal "constants" or<br><code>a { color: #0c0; }</code><br>which changes link color to green.<br></li>
 </ul>
 </li>
 <li>Additional features are input box borders, underlining of links and saving/loading of settings whitelists/blacklists,</li>
