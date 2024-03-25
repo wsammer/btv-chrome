@@ -7,7 +7,7 @@
 body {
 	background:white;
 	--check_color: #06d;
-	--check_bg: #aaa;
+	--check_bg: #cdcecf;
 }
 
 .slider:focus {
@@ -37,7 +37,7 @@ body {
 	--check_color: #0df;
 	--check_bg: transparent;
 }
-label,h1,h2,h3,h4,li,p,b {
+label,h1,h2,h3,h4,li,p,b,.settings {
 	color: white!important;
 }
 span {

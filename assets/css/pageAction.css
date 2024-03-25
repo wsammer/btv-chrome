@@ -24,6 +24,13 @@ body
     z-index:-99999;
 }
 
+textarea {
+    width: 100%;
+    font-size: 16px;
+    color: black;
+    background: white;
+}
+
 /* Sliders */
 
 .sliderDiv
